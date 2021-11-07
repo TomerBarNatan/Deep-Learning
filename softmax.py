@@ -1,31 +1,23 @@
 import numpy as np
 
 
-def softmax_regression(X_L, W, bias, c):
-    prob = sigmoid(X_L, W)
+def softmax_regression(X_L, W, bias, C):
+    probs = sigmoid(X_L, W, bias)
     m = X_L.shape[1]
-    cost = (-1 / m) * (np.sum(c.T * np.log(prob), axis=0))
+    cost = (-1 / m) * (np.sum(C.T * np.log(probs)))
     return cost
 
 
-def sigmoid(X_L, W):
-    output_layer = X_L.T @ W
+def sigmoid(X_L, W, bias):
+    output_layer = X_L.T @ W + bias
     output_layer -= np.max(output_layer)
-    probability = np.exp(output_layer) / np.sum(np.exp(output_layer), axis=1)
-    return probability
+    probs = (np.exp(output_layer).T / np.sum(np.exp(output_layer), axis=1)).T
+    return probs
 
 
-def softmax_jacobian(X_L, W, c):
-    m = X_L.shape[1]
-    prob = sigmoid(X_L, W)
-    jacobian = (-1/m)*X_L@(prob - c.T)
-    return jacobian
-
-
-def softmax_grad(X, W, w_p, c_p, bias):
+def softmax_grad(X, W, bias, C):
+    probs = sigmoid(X, W, bias)
     m = X.shape[1]
-    Xtw_p = X.T @ w_p
-    XtW = X.T @ W
-    temp = np.exp(Xtw_p) / np.sum(np.exp(XtW), axis=1)
-    grad = (1 / m) * X @ (temp - c_p)
-    return grad
+    grad_W = (-1 / m) * (X @ (C.T - probs))
+    grad_b = (-1 / m) * (np.sum(C.T - probs, axis=0)).T
+    return grad_W, grad_b
