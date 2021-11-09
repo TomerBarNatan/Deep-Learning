@@ -45,6 +45,7 @@ def extract_sgd_data():
 	# set parameters
 	output_size = len(trainSetY_batches[0][:, 0])
 	input_size = trainSetX_batches[0].shape[0]
-	theta = np.random.rand(input_size, output_size)
+	# theta = np.random.rand(input_size, output_size)
+	theta = np.zeros([input_size, output_size])
 	bias = np.zeros([1, output_size])
-	return trainSetX, trainSetY, theta, bias
+	return trainSet, trainSetLabels,validationSet, validationSetLabels, theta, bias
