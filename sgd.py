@@ -25,14 +25,14 @@ def least_squares_gradient(A, x, b):
 
 
 if __name__ == '__main__':
-    iter_num = 10000
+    iter_num = 1000
     # A = np.array([[-1, -1, 1], [1, 3, 3], [-1, -1, 5], [1, 3, 7], [1, 2, 3], [1, 3, 4]])
     # b = np.array([[0, 23, 15, 39, 1, 12]]).T
     A = np.random.rand(10,6)
     b = np.random.rand(10,1)
     x = np.random.rand(6, 1)
-    x, costs = sgd(least_squares_gradient, A, x, b, 10, 0.1, iter_num)
+    x, costs = sgd(least_squares_gradient, A, x, b, 10, 0.625, iter_num)
     actual = np.linalg.lstsq(A, b)
     errors = [np.linalg.norm(W - actual[0]) for W in costs]
-    plt.semilogy([i / 200 for i in range(iter_num)], errors)
+    plt.semilogy([i  for i in range(iter_num)], errors)
     plt.show()
