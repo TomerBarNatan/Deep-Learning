@@ -20,4 +20,5 @@ def softmax_grad(X, W, bias, C):
     m = X.shape[1]
     grad_W = (-1 / m) * (X @ (C.T - probs))
     grad_b = (-1 / m) * (np.sum(C.T - probs, axis=0)).T
-    return grad_W, grad_b
+    grad_X = (1 / m) * W @ (probs.T - C)
+    return grad_W, grad_b, grad_X
