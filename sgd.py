@@ -19,7 +19,8 @@ def sgd(grad_function, cost_function, X_train, X_test, W, C_train, C_test, bias,
             grad_W, grad_b = grad_function(X_batch, W, bias, C_batch)
             W = W - learning_rate * grad_W
             bias = bias - learning_rate * grad_b
-        costs.append(cost_function(X_shuffled, W, bias, C_shuffled))
+        cost, _ = cost_function(X_shuffled, W, bias, C_shuffled)
+        costs.append(cost)
         accuracy_train.append(accuracy_percentage(X_shuffled, W, C_shuffled, bias))
         accuracy_test.append(accuracy_percentage(X_test, W, C_test, bias))
     return W, costs, accuracy_train, accuracy_test

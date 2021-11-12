@@ -5,7 +5,7 @@ def softmax_regression(X_L, W, bias, C):
     probs = sigmoid(X_L, W, bias)
     m = X_L.shape[1]
     cost = (-1 / m) * (np.sum(C.T * np.log(probs)))
-    return cost
+    return cost, probs
 
 
 def sigmoid(X_L, W, bias):
