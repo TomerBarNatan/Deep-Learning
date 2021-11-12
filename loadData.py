@@ -2,7 +2,7 @@ import numpy as np
 from scipy.io import loadmat
 
 
-def extract_frad_test_data(data_set, number_of_batches):
+def extract_grad_test_data(data_set, number_of_batches):
 	data = loadmat(data_set)
 	train_set = np.array(data['Yt'])
 	train_set_labels = np.array(data['Ct'])
