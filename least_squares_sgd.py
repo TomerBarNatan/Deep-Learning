@@ -8,6 +8,7 @@ def sgd(grad_function, cost_function, X, W, C, bias, batch_size, learning_rate, 
         shuffler = np.random.permutation(X.shape[1])
         X = X[shuffler]
         C = C[shuffler]
+        m = X.shape[1]
         for i in range(batch_size):
             X_i = X[i * batch_size:i * batch_size + batch_size, :]
             C_i = C[i * batch_size:i * batch_size + batch_size]
@@ -21,9 +22,11 @@ def least_squares_gradient(A, x, b, bias=None):
     grad = 2 * A.T @ A @ x - 2 * A.T @ b
     return grad
 
+
 def least_squares_cost_function(A, x, b, bias=None):
     cost = np.linalg.norm(A @ x - b)
     return cost
+
 
 if __name__ == '__main__':
     iter_num = 1000
