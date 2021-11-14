@@ -17,7 +17,10 @@ class NN:
 
         for i in range(len(network_layers_list) - 1):
             W_i = np.random.uniform(-limit, limit, size=(network_layers_list[i + 1], network_layers_list[i]))
-            bias_i = np.zeros([network_layers_list[i + 1], 1])
+            W_i /= np.linalg.norm(W_i)
+            # W_i = np.zeros((network_layers_list[i + 1], network_layers_list[i]))
+            # W_i[1:2] = 1
+            bias_i = np.ones([network_layers_list[i + 1], 1])
             self.weights.append(W_i)
             self.biases.append(bias_i)
 
@@ -82,7 +85,8 @@ class NN:
 
         # hidden layer grads
         for i in range(layer_number - 2, 0, -1):
-            F_grad_W_i, F_grad_b_i, v_i = self.hidden_layer_grad(X_list[i-1], self.weights[i-1], self.biases[i-1], v_i)
+            F_grad_W_i, F_grad_b_i, v_i = self.hidden_layer_grad(X_list[i - 1], self.weights[i - 1], self.biases[i - 1],
+                                                                 v_i)
             weight_grads.append(F_grad_W_i.copy())
             bias_grads.append(F_grad_b_i.copy())
         return weight_grads, bias_grads
