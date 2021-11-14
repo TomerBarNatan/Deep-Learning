@@ -56,30 +56,32 @@ def grad_bias_test(X, W, bias, C):
 
 
 # def hidden_layer_grad_test(nn, X):
+#     C = np.zeros((10, 1))
+#     C[0] = 1
 #     # calculate F(W) and the gradient w.r.t bias
-#     linear, F_0 = nn.forward_step(X, nn.weights[0], nn.biases[0])
-#     v = np.ones(linear.shape)
-#     grad_W, _, _ = nn.hidden_layer_grad(X, nn.weights[0], nn.biases[0], v)
-#
+#     cost, probs, linear_layers, nonlinear_layers = nn.forward(X, C)
+#     _, _, x_grad = nn.softmax_gradient(nonlinear_layers[-1],nn.weights[-1],C,nonlinear_layers[-2])
+#     grad_W, _, _ = nn.hidden_layer_grad(nonlinear_layers[1], nn.weights[1], nn.biases[1], x_grad)
+#     nn.backpropagation(nonlinear_layers, C)
+#     F_0 = nonlinear_layers[1]
 #     # define a random d for the test
 #     d = np.random.rand(grad_W.shape[0], grad_W.shape[1])
 #     d /= np.linalg.norm(d)
 #     d_flat = d.flatten()
 #     grad_W_flat = grad_W.flatten()
-#
-#
-#     zero_order = []
-#     first_order = []
-#     print('\nGradient test w.r.t bias results:')
-#     print('k\t\terror order 0\t\terror order 1')
-#     for k in range(num_of_iterations):
-#         epsilon = 0.5 ** k
-#         _, F_k = nn.forward_step(X, nn.weights[0] + epsilon * d, nn.biases[0])
-#         F_1 = F_0 + epsilon * d_flat.T @ grad_W_flat
-#         zero_order.append(np.linalg.norm(F_k - F_0))
-#         first_order.append(np.linalg.norm(F_k - F_1))
-#         print(k, '\t', np.linalg.norm(F_k - F_0), '\t', np.linalg.norm(F_k - F_1))
-#     return zero_order, first_order
+
+    # zero_order = []
+    # first_order = []
+    # print('\nGradient test w.r.t bias results:')
+    # print('k\t\terror order 0\t\terror order 1')
+    # for k in range(num_of_iterations):
+    #     epsilon = 0.5 ** k
+    #     _, F_k = nn.forward_step(nonlinear_layers[1], nn.weights[1] + epsilon * d, nn.biases[1])
+    #     F_1 = F_0 + epsilon * d_flat.T @ grad_W_flat
+    #     zero_order.append(np.linalg.norm(F_k - F_0))
+    #     first_order.append(np.linalg.norm(F_k - F_1))
+    #     print(k, '\t', np.linalg.norm(F_k - F_0), '\t', np.linalg.norm(F_k - F_1))
+    # return zero_order, first_order
 
 
 def draw_results(y_0, y_1, result_for='Weights'):
@@ -91,35 +93,40 @@ def draw_results(y_0, y_1, result_for='Weights'):
     plt.ylabel("Error")
     plt.show()
 
+
 epsilonArray = [np.power(0.5, i) for i in range(0, 10)]
 rangeArr = [i for i in range(0, 10)]
 
-def hidden_layer_grad_test(nn, X):
-     firstOrderArr = []
-     secondOrderArr = []
-     linear, F_0 = nn.forward_step(X, nn.weights[0], nn.biases[0])
-     v = np.random.rand(linear.shape[0],linear.shape[1])
-     grad_W, _, _ = nn.hidden_layer_grad(X,nn.weights[0], nn.biases[0], v)
-     d = np.random.rand(grad_W.shape[0], grad_W.shape[1])
-     d = d / np.linalg.norm(d)
-     d_vec = d.flatten()
-     grad = grad_W.flatten()
-     for eps in epsilonArray:
-         d_theta = nn.weights[0].copy()
-         d_theta = d_theta + d * eps
-         linear, d_F_0 = nn.forward_step(X, d_theta, nn.biases[0])
-         firstOrderArr.append(np.linalg.norm(d_F_0 - F_0))
-         secondOrderArr.append(np.linalg.norm(d_F_0 - F_0 - eps * d_vec.T @ grad))
-     plt.plot(rangeArr, firstOrderArr, label="first-order")
-     plt.plot(rangeArr, secondOrderArr, label="second-order")
-     plt.yscale("log")
-     plt.xscale("log")
-     plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='center',
-     ncol=2, mode="expand", borderaxespad=0.)
-     plt.xlabel('epsilons')
-     plt.ylabel('absolute differance')
-     plt.title('wights gradient test:')
-     plt.show()
+
+def hidden_layer_grad_test2(nn, X):
+    C = np.zeros((10, 1))
+    C[0] = 1
+    firstOrderArr = []
+    secondOrderArr = []
+    cost, probs, linear_layers, nonlinear_layers = nn.forward(X, C)
+    _, _, x_grad = nn.softmax_gradient(nonlinear_layers[-1],nn.weights[-1],C,nonlinear_layers[-2])
+    grad_W, grad_b, _ = nn.hidden_layer_grad(nonlinear_layers[1], nn.weights[1], nn.biases[1], x_grad)
+    F_0 = nonlinear_layers[1]
+    d = np.random.rand(grad_b.shape[0], grad_b.shape[1])
+    d = d / np.linalg.norm(d)
+    d_vec = d.flatten()
+    grad = grad_b.flatten()
+    for eps in epsilonArray:
+        d_theta = nn.biases[1].copy()
+        d_theta = d_theta + d * eps
+        linear, d_F_0 = nn.forward_step(nonlinear_layers[1], nn.weights[1], d_theta)
+        firstOrderArr.append(np.linalg.norm(d_F_0 - F_0))
+        secondOrderArr.append(np.linalg.norm(d_F_0 - F_0 - eps * d_vec.T @ grad))
+    plt.plot(rangeArr, firstOrderArr, label="first-order")
+    plt.plot(rangeArr, secondOrderArr, label="second-order")
+    plt.yscale("log")
+    plt.xscale("log")
+    plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc='center',
+    ncol=2, mode="expand", borderaxespad=0.)
+    plt.xlabel('epsilons')
+    plt.ylabel('absolute differance')
+    plt.title('wights gradient test:')
+    plt.show()
 
 def tan_h_gradient(x):
     return 1 - (np.tanh(x) ** 2)
@@ -131,7 +138,8 @@ if __name__ == '__main__':
     # draw_results(zero_order_W, first_order_W)
     # zero_order_bias, first_order_bias = grad_bias_test(X_batches[0], W, bias, C_batches[0])
     # draw_results(zero_order_bias, first_order_bias, result_for='Biases')
-    nn = NN([100, 1000, 100, 10], np.tanh, None, tan_h_gradient, None)
-    X = np.random.rand(100, 1)
-    hidden_layer_grad_test(nn, X)
+    nn = NN([50, 100, 100,10], np.tanh, None, tan_h_gradient, None)
+    X = np.random.rand(50, 1)
+    # zero_order_bias, first_order_bias = hidden_layer_grad_test(nn, X)
+    hidden_layer_grad_test2(nn, X)
     # draw_results(zero_order_bias, first_order_bias, result_for='Weights')

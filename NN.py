@@ -41,10 +41,11 @@ class NN:
         current_x = x_0
         for i in range(len(self.weights) - 1):
             linear, current_x = self.forward_step(current_x, self.weights[i], self.biases[i])
-            linear_layers.append(linear)
-            nonlinear_layers.append(current_x)
+            linear_layers.append(linear.copy())
+            nonlinear_layers.append(current_x.copy())
 
         cost, probs = self.softmax_layer(current_x, self.weights[-1], self.biases[-1], C)
+        nonlinear_layers.append(probs.copy())
         return cost, probs, linear_layers, nonlinear_layers
 
     def softmax_gradient(self, X, W, C, v):
@@ -80,8 +81,8 @@ class NN:
         v_i = x_grad.copy()
 
         # hidden layer grads
-        for i in range(layer_number - 1, 0, -1):
-            F_grad_W_i, F_grad_b_i, v_i = self.hidden_layer_grad(X_list[i], self.weights[i], self.biases[i], v_i)
+        for i in range(layer_number - 2, 0, -1):
+            F_grad_W_i, F_grad_b_i, v_i = self.hidden_layer_grad(X_list[i-1], self.weights[i-1], self.biases[i-1], v_i)
             weight_grads.append(F_grad_W_i.copy())
             bias_grads.append(F_grad_b_i.copy())
         return weight_grads, bias_grads
