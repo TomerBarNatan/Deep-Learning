@@ -4,7 +4,8 @@ from loadData import *
 from softmax import *
 
 
-def sgd(grad_function, cost_function, X_train, X_test, W, C_train, C_test, bias, batch_size, learning_rate, iter_num, epsilon = 0.1):
+def sgd(grad_function, cost_function, X_train, X_test, W, C_train, C_test, bias, batch_size, learning_rate, iter_num,
+        epsilon=0.1):
     costs = []
     accuracy_train = []
     accuracy_test = []
@@ -24,6 +25,9 @@ def sgd(grad_function, cost_function, X_train, X_test, W, C_train, C_test, bias,
         accuracy_train.append(success_percentage(X_shuffled, W, C_shuffled, bias))
         accuracy_test.append(success_percentage(X_test, W, C_test, bias))
     return W, costs, accuracy_train, accuracy_test
+
+
+
 
 
 def plot_accuracy(accuracy_train, accuracy_test, epoches):
@@ -48,6 +52,8 @@ if __name__ == '__main__':
     iter_num = 400
     learning_rate = 0.001
     batch_size = 60
-    trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data()
-    W_train, costs_train, accuracy_train, accuracy_test = sgd(softmax_grad, softmax_regression, trainSetX, testSetX, theta, trainSetY, testSetY, bias, batch_size, learning_rate, iter_num)
+    trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data('PeaksData')
+    W_train, costs_train, accuracy_train, accuracy_test = sgd(softmax_grad, softmax_regression, trainSetX, testSetX,
+                                                              theta, trainSetY, testSetY, bias, batch_size,
+                                                              learning_rate, iter_num)
     plot_accuracy(accuracy_train, accuracy_test, iter_num)

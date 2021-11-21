@@ -3,13 +3,11 @@ import math
 
 
 class NN:
-    def __init__(self, network_layers_list, activation, cost_function, activation_gradient, last_gradient):
+    def __init__(self, network_layers_list, activation, activation_gradient):
         self.weights = []
         self.biases = []
         self.activation = activation
-        self.cost_function = cost_function
         self.activation_gradient = activation_gradient
-        self.last_gradient = last_gradient
 
         np.random.seed(0)
         scale = 1 / max(1., (2 + 2) / 2.)
@@ -20,7 +18,7 @@ class NN:
             W_i /= np.linalg.norm(W_i)
             # W_i = np.zeros((network_layers_list[i + 1], network_layers_list[i]))
             # W_i[1:2] = 1
-            bias_i = np.ones([network_layers_list[i + 1], 1])
+            bias_i = np.zeros([network_layers_list[i + 1], 1])
             self.weights.append(W_i)
             self.biases.append(bias_i)
 
@@ -89,7 +87,7 @@ class NN:
                                                                  v_i)
             weight_grads.append(F_grad_W_i.copy())
             bias_grads.append(F_grad_b_i.copy())
-        return weight_grads, bias_grads
+        return list(reversed(weight_grads)), list(reversed(bias_grads))
 
     def update_thetas(self, W_grad_list, bias_grad_list, learning_rate):
         for i in range(len(self.weights)):

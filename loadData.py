@@ -21,11 +21,9 @@ def extract_grad_test_data(data_set, number_of_batches):
 	return train_set_X_batches, W, bias, train_set_C_batches
 
 
-def extract_sgd_data():
+def extract_sgd_data(dataset):
 	number_of_butches = 200
-	learningRate = 0.0001
-	iterations = 800
-	PeaksData = loadmat('PeaksData.mat')
+	PeaksData = loadmat(f'{dataset}.mat')
 	trainSet = np.array(PeaksData['Yt'])
 	trainSetLabels = np.array(PeaksData['Ct'])
 	validationSet = np.array(PeaksData['Yv'])
