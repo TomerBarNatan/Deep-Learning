@@ -77,8 +77,6 @@ class NN:
         W_grad, b_grad, x_grad = self.softmax_gradient(X_list[-1], self.weights[-1], C, X_list[-2])
         weight_grads.append(W_grad.copy())
         bias_grads.append(b_grad.copy())
-        weight_grads.append(W_grad)
-        bias_grads.append(b_grad)
         v_i = x_grad.copy()
 
         # hidden layer grads

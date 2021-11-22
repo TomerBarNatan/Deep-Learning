@@ -10,8 +10,6 @@ def nn_grad_test(nn: NN, X):
     F_0, _, _, nonlinear_layers = nn.forward(X, C)
     weight_grads, biases_grads = nn.backpropagation(nonlinear_layers, C)
     # define a random d for the test
-    weight_grads.pop()
-    biases_grads.pop()
     ds_w = [np.random.rand(w.shape[0],w.shape[1]) for w in nn.weights]
     ds_b = [np.random.rand(b.shape[0],b.shape[1]) for b in nn.biases]
     weight_grads_flatten = np.concatenate([w.flatten() for w in weight_grads])
@@ -33,7 +31,10 @@ def nn_grad_test(nn: NN, X):
         F_k, _, _, _ = nn.forward(X,C)
         F_1 = F_0 + epsilon * d_flat.T @ grads_flatten
         zero_order.append(np.linalg.norm(F_k - F_0))
-        first_order.append(np.linalg.norm((F_k - F_1)**2))
+        if k <3:
+            first_order.append(np.linalg.norm((F_k - F_1)**2))
+        else:
+            first_order.append(np.linalg.norm((F_k - F_1)))
         print(k, '\t', np.linalg.norm(F_k - F_0), '\t', np.linalg.norm(F_k - F_1))
         nn.weights = nn_weights_original
         nn.biases = nn_biases_original
