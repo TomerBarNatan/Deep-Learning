@@ -31,10 +31,7 @@ def nn_grad_test(nn: NN, X):
         F_k, _, _, _ = nn.forward(X,C)
         F_1 = F_0 + epsilon * d_flat.T @ grads_flatten
         zero_order.append(np.linalg.norm(F_k - F_0))
-        if k <3:
-            first_order.append(np.linalg.norm((F_k - F_1)**2))
-        else:
-            first_order.append(np.linalg.norm((F_k - F_1)))
+        first_order.append(np.linalg.norm((F_k - F_1) ** 2))
         print(k, '\t', np.linalg.norm(F_k - F_0), '\t', np.linalg.norm(F_k - F_1))
         nn.weights = nn_weights_original
         nn.biases = nn_biases_original
@@ -54,7 +51,7 @@ def draw_results(y_0, y_1, result_for='Weights'):
     plt.show()
 
 if __name__ == '__main__':
-    nn = NN([50, 100, 20, 10], np.tanh, tan_h_gradient)
+    nn = NN([50, 10], np.tanh, tan_h_gradient)
     X = np.random.rand(50, 1)
     zero_order_bias, first_order_bias = nn_grad_test(nn, X)
     draw_results(zero_order_bias, first_order_bias, result_for='Weights')

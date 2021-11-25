@@ -61,7 +61,7 @@ def hidden_layer_grad_test(nn, X):
     # calculate F(W) and the gradient w.r.t bias
     cost, probs, linear_layers, nonlinear_layers = nn.forward(X, C)
     _, _, x_grad = nn.softmax_gradient(nonlinear_layers[-1],nn.weights[-1],C,nonlinear_layers[-2])
-    grad_W, _, _ = nn.res_hidden_layer_grad(nonlinear_layers[1], nn.weights[1], nn.biases[1], x_grad)
+    grad_W, _, _ = nn.hidden_layer_grad(nonlinear_layers[1], nn.weights[1], nn.biases[1], x_grad)
     F_0 = nonlinear_layers[2]
     # define a random d for the test
     d = np.random.rand(grad_W.shape[0],1)

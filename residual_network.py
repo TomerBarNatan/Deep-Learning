@@ -117,7 +117,7 @@ class ResNet:
         grad_first_W, grad_first_b, _ = self.hidden_layer_grad(X_list[0], self.weights[0], self.biases[0], v_i)
         weight_grads.append(grad_first_W.copy())
         bias_grads.append(grad_first_b.copy())
-        return weight_grads, bias_grads
+        return list(reversed(weight_grads)), list(reversed(bias_grads))
 
     def update_thetas(self, W_grad_list, bias_grad_list, learning_rate):
         self.weights[0] = self.weights[0] - learning_rate * W_grad_list[0]
