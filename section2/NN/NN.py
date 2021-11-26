@@ -11,6 +11,8 @@ class NN:
         self.biases = []
         self.activation = activation
         self.activation_gradient = activation_gradient
+        self.weights_grads = []
+        self.biases_grads = []
 
         np.random.seed(0)
         scale = 1 / max(1., (2 + 2) / 2.)
@@ -121,18 +123,47 @@ class NN:
         bias_grads = []
 
         # last layer gradient
-        W_grad, b_grad, x_grad = self.softmax_gradient(X_list[-1], self.weights[-1], C, X_list[-2])
-        weight_grads.append(W_grad.copy())
-        bias_grads.append(b_grad.copy())
-        v_i = x_grad.copy()
+        # W_grad, b_grad, x_grad = self.softmax_gradient(X_list[-1], self.weights[-1], C, X_list[-2])
+        # weight_grads.append(W_grad.copy())
+        # bias_grads.append(b_grad.copy())
+        # v_i = x_grad.copy()
+        v_i = self.backward_last_layer(X_list, C)
 
         # hidden layer grads
         for i in range(layer_number - 2, 0, -1):
-            F_grad_W_i, F_grad_b_i, v_i = self.hidden_layer_grad(X_list[i - 1], self.weights[i - 1], self.biases[i - 1],
-                                                                 v_i)
-            weight_grads.append(F_grad_W_i.copy())
-            bias_grads.append(F_grad_b_i.copy())
+            # F_grad_W_i, F_grad_b_i, v_i = self.hidden_layer_grad(X_list[i - 1], self.weights[i - 1], self.biases[i - 1],
+            #                                                      v_i)
+            # weight_grads.append(F_grad_W_i.copy())
+            # bias_grads.append(F_grad_b_i.copy())
+            v_i = self.backward_hidden_layer(X_list, i, v_i)
+
         return list(reversed(weight_grads)), list(reversed(bias_grads))
+
+    def backward_last_layer(self, X_list, C):
+        """
+        Backward step for the last layer (softmax layer)
+        :param X_list: list of X (data) of each layer (from the forward pass)
+        :param C: the indicators
+        :return: Vector v_i for the next backward step
+        """
+        W_grad, b_grad, x_grad = self.softmax_gradient(X_list[-1], self.weights[-1], C, X_list[-2])
+        self.weights_grads.append(W_grad.copy())
+        self.biases_grads.append(b_grad.copy())
+        v_i = x_grad.copy()
+        return v_i
+
+    def backward_hidden_layer(self, X_list, i, v):
+        """
+        Backward step for the hidden layers
+        :param X_list: list of X (data) of each layer (from the forward pass)
+        :param i: index of the current layer
+        :param v: vector v from the previous backward step
+        :return: New vector v for the next backward step to use
+        """
+        F_grad_W_i, F_grad_b_i, v_new = self.hidden_layer_grad(X_list[i-1], self.weights[i-1], self.biases[i-1], v)
+        self.weights_grads.append(F_grad_W_i.copy())
+        self.biases_grads.append(F_grad_b_i.copy())
+        return v_new
 
     def update_thetas(self, W_grad_list, bias_grad_list, learning_rate):
         """
