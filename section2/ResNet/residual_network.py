@@ -3,6 +3,9 @@ import math
 
 
 class ResNet:
+    """
+    ResNet is a class which represents the neural network.
+    """
     def __init__(self, input_size, num_of_layers, num_of_labels, activation, activation_gradient, first_layer=8):
         self.weights = []
         self.biases = []
@@ -33,8 +36,16 @@ class ResNet:
         self.biases.append(bias_n)
 
     def softmax_layer(self, X_L, W, bias, C):
+        """
+        The softmax function fot the last layer in the network
+        :param X_L: the data from step n-1
+        :param W: the weights from step n-1
+        :param bias: the bias from step n-1
+        :param C: the indicators
+        :return: cost value (scalar) and the probabilities matrix (for each data point, a vector of probabilities to get
+        each label.
+        """
         batch_size = C.shape[1]
-
         scores = W @ X_L + bias
         scores -= np.max(scores)
         probs = (np.exp(scores) / np.sum(np.exp(scores), axis=0))
@@ -42,16 +53,38 @@ class ResNet:
         return cost, probs
 
     def res_forward_step(self, x, Ws, bias):
+        """
+        A forward step in the residual network, alters the data in transition from layer k to layer k+1
+        :param x: the data in layer k
+        :param Ws: the weights in layer k (we have W1 and W2)
+        :param bias: the bias in layer k
+        :return: the linear result of W1@x + bias, and x + W2 @ f(linear) where f is the configured activation function
+        """
         linear = Ws[0] @ x + bias
         nonlinear = x + Ws[1] @ self.activation(linear)
         return linear, nonlinear
 
     def forward_step(self, x, W, bias):
+        """
+       The first forward step of the ResNet, used to change dimensions at the beginning of the network.
+       :param x: the data
+       :param W: the weights
+       :param bias: the bias
+       :return: the linear result of W@x + bias, and f(linear) where f is the configured activation function
+       """
         linear = W @ x + bias
         nonlinear = self.activation(linear)
         return linear, nonlinear
 
     def forward(self, x_0, C):
+        """
+        Forward routine of the whole residual network, starting from layer 1 and performing n forward steps (including
+        the last step of the softmax function)
+        :param x_0: the initial data
+        :param C: the indicators
+        :return: cost of the entire residual network, probabilities matrix, linear (W@x+bias) and non-linear
+        (activation(linear)) results for each layer (as lists).
+        """
         linear_layers = [x_0.copy()]
         nonlinear_layers = [x_0.copy()]
         linear, current_x = self.forward_step(x_0, self.weights[0], self.biases[0])
@@ -67,8 +100,15 @@ class ResNet:
         return cost, probs, linear_layers, nonlinear_layers
 
     def softmax_gradient(self, X, W, C, v):
+        """
+        Calculate the softmax gradients w.r.t the weights, the bias and the data.
+        :param X: the data
+        :param W: the weights
+        :param C: the indicators
+        :param v: a vector v
+        :return: softmax gradient w.r.t weights, bias and data
+        """
         batch_size = C.shape[1]
-
         dl_dy = (1 / batch_size) * (X - C)
         dl_W = dl_dy @ v.T
         dl_db = np.sum(dl_dy, axis=1, keepdims=True)
@@ -76,6 +116,15 @@ class ResNet:
         return dl_W, dl_db, new_v
 
     def res_hidden_layer_grad(self, X, Ws, b, v):
+        """
+        Calculate the gradient of an individual hidden layer.
+        :param X: the current layer's data
+        :param Ws: the current layer's weights (W1 and W2)
+        :param b: the current layer's bias
+        :param v: a vector v (from the next layer)
+        :return: The hidden layer gradient w.r.t weights (W1 and W2), bias and the new v vector to use in the previous
+        layer.
+        """
         linear = Ws[0] @ X + b
         batch_size = linear.shape[1]
         grad_activation = self.activation_gradient(linear)
@@ -86,6 +135,14 @@ class ResNet:
         return grad_W1, grad_W2, grad_b, new_v
 
     def hidden_layer_grad(self, X, W, b, v):
+        """
+        Calculate the gradient of the first layer.
+        :param X: the first layer's data
+        :param W: the first layer's weights
+        :param b: the first layer's bias
+        :param v: a vector v (from the second layer)
+        :return: The first layer gradient w.r.t weights, bias and the new v vector to use in the previous layer
+        """
         linear = W @ X + b
         batch_size = linear.shape[1]
         grad_activation = self.activation_gradient(linear)
@@ -96,6 +153,12 @@ class ResNet:
         return grad_W, grad_b, new_v
 
     def backpropagation(self, X_list, C):
+        """
+        The backpropagation process of the network.
+        :param X_list: a list of the data X in each layer
+        :param C: the indicators
+        :return: gradients list of each layer w.r.t weights and bias
+        """
         layer_number = len(X_list)
         weight_grads = []
         bias_grads = []
@@ -120,6 +183,12 @@ class ResNet:
         return list(reversed(weight_grads)), list(reversed(bias_grads))
 
     def update_thetas(self, W_grad_list, bias_grad_list, learning_rate):
+        """
+        Update the weights (W1 and W2) and biases of the network
+        :param W_grad_list: list of gradients w.r.t weights
+        :param bias_grad_list: list of gradients w.r.t bias
+        :param learning_rate: the learning rate
+        """
         self.weights[0] = self.weights[0] - learning_rate * W_grad_list[0]
         self.biases[0] = self.biases[0] - learning_rate * bias_grad_list[0]
         for i in range(1, len(self.weights)):

@@ -1,22 +1,38 @@
 import matplotlib.pyplot as plt
-from loadData import *
+from nn_from_scratch.loadData import *
 from nn_from_scratch.section2.activations import *
-from softmax import *
+from nn_from_scratch.section1.softmax import *
 from nn_from_scratch.section2.NN.NN import NN
 
 
-def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, iter_num, divide_lr=50,
+def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, epoch_num, divide_lr=50,
         graph_till_now=None):
+    """
+    SGD for the neural network. each SGD batch iteration, the network learns using forward pass. then, backpropagation
+    occurs to calculate the gradients and update the network params.
+    :param nn: the neural network object
+    :param X_train: train data
+    :param X_test: test data
+    :param W: weights
+    :param C_train: train indicators
+    :param C_test: test indicators
+    :param batch_size: the desired batch size
+    :param learning_rate: the desired learning rate
+    :param epoch_num: number of epochs to perform
+    :param divide_lr: how many epochs until dividing the learning rate by 10
+    :param graph_till_now:
+    :return: Optimized weights, costs through the optimization, accuracy lists for the train and test
+    """
     costs = []
     accuracy_train = []
     accuracy_test = []
     m = X_train.shape[1]
-    for iter in range(iter_num):
+    for epoch in range(epoch_num):
         cur_costs = []
-        if iter % divide_lr == 0:
+        if epoch % divide_lr == 0:
             learning_rate /= 10
         shuffler = np.random.permutation(X_train.shape[1])
-        print(iter)
+        print(epoch)
         X_shuffled = X_train.T[shuffler].T
         C_shuffled = C_train.T[shuffler].T
         for i in range(int(m / batch_size)):
@@ -29,16 +45,22 @@ def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, 
         costs.append(sum(cur_costs) / len(cur_costs))
         accuracy_train.append(success_percentage(nn, X_shuffled, C_shuffled))
         accuracy_test.append(success_percentage(nn, X_test, C_test))
-        if graph_till_now and iter % graph_till_now == 0 and iter > 0:
-            # plt.plot([i for i in range(iter + 1)], costs)
+        if graph_till_now and epoch % graph_till_now == 0 and epoch > 0:
+            # plt.plot([i for i in range(epoch + 1)], costs)
             # plt.show()
-            plot_accuracy(accuracy_train, accuracy_test, iter + 1)
+            plot_accuracy(accuracy_train, accuracy_test, epoch + 1)
     return W, costs, accuracy_train, accuracy_test
 
 
-def plot_accuracy(accuracy_train, accuracy_test, epoches):
-    plt.plot(range(epoches), accuracy_train)
-    plt.plot(range(epoches), accuracy_test)
+def plot_accuracy(accuracy_train, accuracy_test, epochs):
+    """
+    Plots the accuracy graphs of the SGD iterations
+    :param accuracy_train: train data accuracy
+    :param accuracy_test: test data accuracy
+    :param epochs: number of epochs performed
+    """
+    plt.plot(range(epochs), accuracy_train)
+    plt.plot(range(epochs), accuracy_test)
     plt.xlabel('Epoch')
     plt.ylabel('Success Percentage')
     plt.title('SGD Success % Per Epoch')
@@ -47,6 +69,13 @@ def plot_accuracy(accuracy_train, accuracy_test, epoches):
 
 
 def success_percentage(nn: NN, X, C):
+    """
+    Calculates the success percentage of the optimization w.r.t the network
+    :param nn: the neural network object
+    :param X: the data
+    :param C: the indicators
+    :return: Accuracy percentage
+    """
     _, probs, _, _ = nn.forward(X, C)
     labels_pred = np.argmax(probs, axis=0)
     labels_true = np.argmax(C.T, axis=1)
@@ -54,11 +83,10 @@ def success_percentage(nn: NN, X, C):
     return accuracy_rate * 100
 
 
-# def tan_h_gradient(x):
-#     return np.ones(x.shape) - (np.tanh(x)) ** 2
-
-
 def sgd_nn_peaks_data():
+    """
+    Run SGD with NN on Peaks data set
+    """
     iter_num = 200
     learning_rate = 10
     batch_size = 60
@@ -70,6 +98,9 @@ def sgd_nn_peaks_data():
 
 
 def sgd_nn_gmm_data():
+    """
+    Run SGD with NN on GMM data set
+    """
     iter_num = 200
     learning_rate = 100
     batch_size = 60
@@ -81,6 +112,9 @@ def sgd_nn_gmm_data():
 
 
 def sgd_nn_swiss_roll_data():
+    """
+    Run SGD with NN on SwissRoll data set
+    """
     iter_num = 1000
     learning_rate = 0.3
     batch_size = 17

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from loadData import *
+from nn_from_scratch.loadData import *
 from nn_from_scratch.section2.ResNet.residual_network import ResNet
 from nn_from_scratch.section2.activations import *
 
