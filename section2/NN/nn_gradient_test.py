@@ -7,13 +7,19 @@ num_of_iterations = 15
 
 
 def nn_grad_test_W(nn: NN, X):
+    """
+    Test the gradient of the whole network w.r.t the weights
+    :param nn: the neural network object
+    :param X: the data to test with (we send random data)
+    :return: shows a plot of the zero order vs. first order approximations
+    """
     C = np.zeros((10, 1))
     C[0] = 1
     F_0, _, _, nonlinear_layers = nn.forward(X, C)
     weight_grads, biases_grads = nn.backpropagation(nonlinear_layers, C)
     grad_W = np.concatenate([w.flatten() for w in weight_grads])
 
-    # define a random d for the test
+    # define a random d for the test and align dimensions
     ds_w = [np.ones((w.shape[0], w.shape[1])) for w in nn.weights]
     ds_w = [d / np.linalg.norm(d) for d in ds_w]
     d_flat = np.concatenate([d.flatten() for d in ds_w])
@@ -36,6 +42,12 @@ def nn_grad_test_W(nn: NN, X):
 
 
 def nn_grad_test_b(nn: NN, X):
+    """
+    Test the gradient of the whole network w.r.t the biases
+    :param nn: the neural network object
+    :param X: the data to test with (we send random data)
+    :return: shows a plot of the zero order vs. first order approximations
+    """
     C = np.zeros((10, 1))
     C[0] = 1
     F_0, _, _, nonlinear_layers = nn.forward(X, C)

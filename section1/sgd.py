@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 from loadData import *
 from softmax import *
@@ -56,7 +55,8 @@ if __name__ == '__main__':
     iter_num = 400
     learning_rate = 0.001
     batch_size = 60
-    trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data('PeaksData')
+    trainSetX, trainSetY, testSetX, testSetY, theta, bias = \
+        extract_sgd_data('PeaksData')
     W_train, costs_train, accuracy_train, accuracy_test = sgd(softmax_grad, softmax_regression, trainSetX, testSetX,
                                                               theta, trainSetY, testSetY, bias, batch_size,
                                                               learning_rate, iter_num)

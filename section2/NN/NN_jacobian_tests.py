@@ -3,15 +3,22 @@ from section2.NN.NN import NN
 from section2.activations import tanh, tanh_grad
 import matplotlib.pyplot as plt
 
+iter_num = 10
+
 
 def jacobian_test_layer_X(nn: NN, X_0):
-    iter_num = 10
+    """
+    Direct jacobian transposed test for a single layer w.r.t to the data
+    :param nn: the neural network object
+    :param X_0: initial data (we init with random data)
+    :return: shows a plot of the zero order vs. first order approximation
+    """
     _, X = nn.forward_step(X_0, nn.weights[0], nn.biases[0])
     n, m = X.shape
     out_dimensions = nn.biases[1].shape[0]
     U = np.random.rand(out_dimensions, m)
-    diff = np.zeros(iter_num)
-    diff_grad = np.zeros(iter_num)
+    zero_order = np.zeros(iter_num)
+    first_order = np.zeros(iter_num)
     epsilons = [0.5 ** i for i in range(iter_num)]
     d = np.ones((X.shape[0], X.shape[1]))
     d /= np.linalg.norm(d)
@@ -31,30 +38,28 @@ def jacobian_test_layer_X(nn: NN, X_0):
         X_eps_forward_T = X_eps_forward.T
         gx_epsilon = np.dot(X_eps_forward_T, U).item()
         d_flat = d.reshape(-1, 1)
-        diff[i] = abs(gx_epsilon - g_x)
-        diff_grad[i] = abs(gx_epsilon - g_x - epsilon * d_flat.T @ g_grad)
-    plt.semilogy(np.arange(1, iter_num + 1, 1), diff)
-    plt.semilogy(np.arange(1, iter_num + 1, 1), diff_grad)
-    plt.xlabel('epsilons')
-    plt.ylabel('difference')
-    plt.title('X Jacobian Test Results')
-    plt.legend(("diff without grad", "diff with grad"))
-    plt.show()
+        zero_order[i] = abs(gx_epsilon - g_x)
+        first_order[i] = abs(gx_epsilon - g_x - epsilon * d_flat.T @ g_grad)
+    draw_results(zero_order, first_order)
 
 
 def jacobian_test_layer_W(nn: NN, X_0):
-    iter_num = 10
+    """
+        Direct jacobian transposed test for a single layer w.r.t to the weights
+        :param nn: the neural network object
+        :param X_0: initial data (we init with random data)
+        :return: shows a plot of the zero order vs. first order approximation
+        """
     _, X = nn.forward_step(X_0, nn.weights[0], nn.biases[0])
     W = nn.weights[1]
     b = nn.biases[1]
     n, m = X.shape
     out_dimensions = nn.biases[1].shape[0]
     U = np.random.rand(out_dimensions, m)
-    diff = np.zeros(iter_num)
-    diff_grad = np.zeros(iter_num)
+    zero_order = np.zeros(iter_num)
+    first_order = np.zeros(iter_num)
     epsilons = [0.5 ** i for i in range(iter_num)]
     d = np.ones((W.shape[0], W.shape[1]))
-    # d = np.random.rand(*W.shape)
     d /= np.linalg.norm(d)
 
     X_linear, X_forward = nn.forward_step(X, W, b)
@@ -71,27 +76,26 @@ def jacobian_test_layer_W(nn: NN, X_0):
         X_eps_forward_T = X_eps_forward.T
         gx_epsilon = np.dot(X_eps_forward_T, U).item()
         d_flat = d.reshape(-1, 1)
-        diff[i] = abs(gx_epsilon - g_x)
-        diff_grad[i] = abs(gx_epsilon - g_x - epsilon * d_flat.T @ g_grad)
-    plt.semilogy(np.arange(1, iter_num + 1, 1), diff)
-    plt.semilogy(np.arange(1, iter_num + 1, 1), diff_grad)
-    plt.xlabel('epsilons')
-    plt.ylabel('difference')
-    plt.title('W Jacobian Test Results')
-    plt.legend(("diff without grad", "diff with grad"))
-    plt.show()
+        zero_order[i] = abs(gx_epsilon - g_x)
+        first_order[i] = abs(gx_epsilon - g_x - epsilon * d_flat.T @ g_grad)
+    draw_results(zero_order, first_order, 'weights')
 
 
 def jacobian_test_layer_b(nn: NN, X_0):
-    iter_num = 10
+    """
+        Direct jacobian transposed test for a single layer w.r.t to biases
+        :param nn: the neural network object
+        :param X_0: initial data (we init with random data)
+        :return: shows a plot of the zero order vs. first order approximation
+        """
     _, X = nn.forward_step(X_0, nn.weights[0], nn.biases[0])
     W = nn.weights[1]
     b = nn.biases[1]
     n, m = X.shape
     out_dimensions = nn.biases[1].shape[0]
     U = np.random.rand(out_dimensions, m)
-    diff = np.zeros(iter_num)
-    diff_grad = np.zeros(iter_num)
+    zero_order = np.zeros(iter_num)
+    first_order = np.zeros(iter_num)
     epsilons = [0.5 ** i for i in range(iter_num)]
     d = np.random.rand(b.shape[0], b.shape[1])
     d /= np.linalg.norm(d)
@@ -99,7 +103,6 @@ def jacobian_test_layer_b(nn: NN, X_0):
     X_linear, X_forward = nn.forward_step(X, W, b)
     X_forward_T = X_forward.T
     g_x = np.dot(X_forward_T, U).item()
-
 
     Jb = np.diag(nn.activation_gradient(X_linear).flatten())
     g_grad = Jb.T @ U
@@ -110,14 +113,18 @@ def jacobian_test_layer_b(nn: NN, X_0):
         X_eps_forward_T = X_eps_forward.T
         gx_epsilon = np.dot(X_eps_forward_T, U).item()
         d_flat = d.reshape(-1, 1)
-        diff[i] = abs(gx_epsilon - g_x)
-        diff_grad[i] = abs(gx_epsilon - g_x - epsilon * d_flat.T @ g_grad)
-    plt.semilogy(np.arange(1, iter_num + 1, 1), diff)
-    plt.semilogy(np.arange(1, iter_num + 1, 1), diff_grad)
-    plt.xlabel('epsilons')
-    plt.ylabel('difference')
-    plt.title('W Jacobian Test Results')
-    plt.legend(("diff without grad", "diff with grad"))
+        zero_order[i] = abs(gx_epsilon - g_x)
+        first_order[i] = abs(gx_epsilon - g_x - epsilon * d_flat.T @ g_grad)
+    draw_results(zero_order, first_order, 'biases')
+
+
+def draw_results(zero_order, first_order, wrt='data'):
+    plt.semilogy(np.arange(1, iter_num + 1, 1), zero_order)
+    plt.semilogy(np.arange(1, iter_num + 1, 1), first_order)
+    plt.xlabel('Iteration')
+    plt.ylabel('Error')
+    plt.title(f'Direct jacobian transposed test of a single layer w.r.t the {wrt}')
+    plt.legend(("Zero order approximation", "First order approximation"))
     plt.show()
 
 
@@ -125,5 +132,5 @@ if __name__ == '__main__':
     nn = NN([3, 5, 7, 8], tanh, tanh_grad)
     X = np.random.rand(3, 1)
     jacobian_test_layer_b(nn, X)
-    # jacobian_test_layer_X(nn, X)
-    # jacobian_test_layer_W(nn, X)
+    jacobian_test_layer_X(nn, X)
+    jacobian_test_layer_W(nn, X)
