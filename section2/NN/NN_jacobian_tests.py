@@ -1,6 +1,6 @@
 import numpy as np
 from nn_from_scratch.section2.NN.NN import NN
-from softmax import softmax_regression
+from nn_from_scratch.section1.softmax import softmax_regression
 from nn_from_scratch.section2.activations import tanh, tanh_grad
 
 epsilons = [np.power(0.5, i) for i in range(1, 10)]
