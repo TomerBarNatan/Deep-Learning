@@ -1,6 +1,6 @@
 import numpy as np
-from nn_from_scratch.section2.NN.NN import NN
-from nn_from_scratch.section2.activations import tanh, tanh_grad
+from section2.NN.NN import NN
+from section2.activations import tanh, tanh_grad
 import matplotlib.pyplot as plt
 num_of_iterations = 30
 
@@ -50,7 +50,7 @@ def draw_results(y_0, y_1, result_for='Weights'):
 
 
 if __name__ == '__main__':
-    nn = NN([50, 10], tanh, tanh_grad)
+    nn = NN([50, 10,10,10,10], tanh, tanh_grad)
     X = np.random.rand(50, 1)
     zero_order_bias, first_order_bias = nn_grad_test(nn, X)
     draw_results(zero_order_bias, first_order_bias, result_for='Weights')

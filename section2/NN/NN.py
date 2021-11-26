@@ -6,6 +6,7 @@ class NN:
     """
     NN is a class which represents the neural network.
     """
+
     def __init__(self, network_layers_list, activation, activation_gradient):
         self.weights = []
         self.biases = []
@@ -119,25 +120,15 @@ class NN:
         :return: gradients list of each layer w.r.t weights and bias
         """
         layer_number = len(X_list)
-        weight_grads = []
-        bias_grads = []
 
         # last layer gradient
-        # W_grad, b_grad, x_grad = self.softmax_gradient(X_list[-1], self.weights[-1], C, X_list[-2])
-        # weight_grads.append(W_grad.copy())
-        # bias_grads.append(b_grad.copy())
-        # v_i = x_grad.copy()
         v_i = self.backward_last_layer(X_list, C)
 
         # hidden layer grads
         for i in range(layer_number - 2, 0, -1):
-            # F_grad_W_i, F_grad_b_i, v_i = self.hidden_layer_grad(X_list[i - 1], self.weights[i - 1], self.biases[i - 1],
-            #                                                      v_i)
-            # weight_grads.append(F_grad_W_i.copy())
-            # bias_grads.append(F_grad_b_i.copy())
             v_i = self.backward_hidden_layer(X_list, i, v_i)
-
-        return list(reversed(weight_grads)), list(reversed(bias_grads))
+        self.weights_grads = list(reversed(self.weights_grads))
+        self.biases_grads = list(reversed(self.biases_grads))
 
     def backward_last_layer(self, X_list, C):
         """
@@ -160,12 +151,13 @@ class NN:
         :param v: vector v from the previous backward step
         :return: New vector v for the next backward step to use
         """
-        F_grad_W_i, F_grad_b_i, v_new = self.hidden_layer_grad(X_list[i-1], self.weights[i-1], self.biases[i-1], v)
+        F_grad_W_i, F_grad_b_i, v_new = self.hidden_layer_grad(X_list[i - 1], self.weights[i - 1], self.biases[i - 1],
+                                                               v)
         self.weights_grads.append(F_grad_W_i.copy())
         self.biases_grads.append(F_grad_b_i.copy())
         return v_new
 
-    def update_thetas(self, W_grad_list, bias_grad_list, learning_rate):
+    def update_thetas(self, learning_rate):
         """
         Update the weights and biases of the network
         :param W_grad_list: list of gradients w.r.t weights
@@ -173,5 +165,5 @@ class NN:
         :param learning_rate: the learning rate
         """
         for i in range(len(self.weights)):
-            self.weights[i] = self.weights[i] - learning_rate * W_grad_list[i]
-            self.biases[i] = self.biases[i] - learning_rate * bias_grad_list[i]
+            self.weights[i] = self.weights[i] - learning_rate * self.weights_grads[i]
+            self.biases[i] = self.biases[i] - learning_rate * self.biases_grads[i]

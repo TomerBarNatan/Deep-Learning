@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-from nn_from_scratch.loadData import *
-from nn_from_scratch.section2.activations import *
-from nn_from_scratch.section1.softmax import *
-from nn_from_scratch.section2.NN.NN import NN
+from loadData import *
+from section2.activations import *
+from section1.softmax import *
+from section2.NN.NN import NN
 
 
 def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, epoch_num, divide_lr=50,
@@ -39,8 +39,8 @@ def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, 
             X_batch = X_shuffled[:, i * batch_size:i * batch_size + batch_size]
             C_batch = C_shuffled[:, i * batch_size:i * batch_size + batch_size]
             cost, probs, linear_layers, nonlinear_layers = nn.forward(X_batch, C_batch)
-            weight_grads, bias_grads = nn.backpropagation(nonlinear_layers, C_batch)
-            nn.update_thetas(weight_grads, bias_grads, learning_rate)
+            nn.backpropagation(nonlinear_layers, C_batch)
+            nn.update_thetas(learning_rate)
             cur_costs.append(cost)
         costs.append(sum(cur_costs) / len(cur_costs))
         accuracy_train.append(success_percentage(nn, X_shuffled, C_shuffled))

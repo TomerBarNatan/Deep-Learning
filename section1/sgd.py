@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from nn_from_scratch.loadData import *
+from loadData import *
 from softmax import *
 
 

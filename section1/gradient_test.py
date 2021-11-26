@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from softmax import softmax_regression, softmax_grad
-from nn_from_scratch.loadData import extract_grad_test_data
+from loadData import extract_grad_test_data
 
 num_of_iterations = 10
 
@@ -128,7 +128,7 @@ rangeArr = [i for i in range(0, 10)]
 
 
 if __name__ == '__main__':
-    X_batches, W, bias, C_batches = extract_grad_test_data("PeaksData.mat", 100)
+    X_batches, W, bias, C_batches = extract_grad_test_data("GMMData.mat", 100)
     zero_order_W, first_order_W = grad_W_test(X_batches[0], W, bias, C_batches[0])
     draw_results(zero_order_W, first_order_W)
     zero_order_bias, first_order_bias = grad_bias_test(X_batches[0], W, bias, C_batches[0])

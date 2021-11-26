@@ -1,7 +1,7 @@
 import numpy as np
-from nn_from_scratch.section2.NN.NN import NN
-from nn_from_scratch.section1.softmax import softmax_regression
-from nn_from_scratch.section2.activations import tanh, tanh_grad
+from section2.NN.NN import NN
+from section1.softmax import softmax_regression
+from section2.activations import tanh, tanh_grad
 from matplotlib.pyplot import plot as plt
 
 epsilons = [np.power(0.5, i) for i in range(1, 10)]

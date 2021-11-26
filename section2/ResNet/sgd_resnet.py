@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
-from nn_from_scratch.loadData import *
-from nn_from_scratch.section2.ResNet.residual_network import ResNet
-from nn_from_scratch.section2.activations import *
+from loadData import *
+from section2.ResNet.residual_network import ResNet
+from section2.activations import *
 
 
 def sgd(nn: ResNet, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, iter_num, divide_lr=50, graph_till_now = None):

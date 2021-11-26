@@ -3,7 +3,7 @@ from scipy.io import loadmat
 
 
 def extract_grad_test_data(data_set, number_of_batches):
-	data = loadmat(data_set)
+	data = loadmat("../" + data_set)
 	train_set = np.array(data['Yt'])
 	train_set_labels = np.array(data['Ct'])
 
@@ -23,7 +23,7 @@ def extract_grad_test_data(data_set, number_of_batches):
 
 def extract_sgd_data(dataset):
 	number_of_butches = 200
-	PeaksData = loadmat(f'{dataset}.mat')
+	PeaksData = loadmat(f'../../{dataset}.mat')
 	trainSet = np.array(PeaksData['Yt'])
 	trainSetLabels = np.array(PeaksData['Ct'])
 	validationSet = np.array(PeaksData['Yv'])

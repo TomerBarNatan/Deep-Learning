@@ -1,4 +1,4 @@
-from nn_from_scratch.section2.NN.NN import NN
+from section2.NN.NN import NN
 import numpy as np
 import matplotlib.pyplot as plt
 
