@@ -24,7 +24,6 @@ class NN:
 
     def softmax_layer(self, X_L, W, bias, C):
         batch_size = C.shape[1]
-
         scores = W @ X_L + bias
         scores -= np.max(scores)
         probs = (np.exp(scores) / np.sum(np.exp(scores), axis=0))

@@ -4,17 +4,23 @@ from loadData import *
 from softmax import *
 
 
-def sgd(grad_function, cost_function, X_train, X_test, W, C_train, C_test, bias, batch_size, learning_rate, iter_num,
+def sgd(grad_function, cost_function, X_train, X_test, W, C_train, C_test, bias, batch_size, learning_rate, epoch_num,
         epsilon=0.1):
+    """
+    SGD algorithm implementation.
+    """
     costs = []
     accuracy_train = []
     accuracy_test = []
-    for iter in range(iter_num):
+    for epoch in range(epoch_num):
+        # Epoch start
+        # shuffle the data and indicators before batching
         shuffler = np.random.permutation(X_train.shape[1])
         X_shuffled = X_train.T[shuffler].T
         C_shuffled = C_train.T[shuffler].T
         m = X_train.shape[1]
         for i in range(int(m / batch_size)):
+            # for each batch:
             X_batch = X_shuffled[:, i * batch_size:i * batch_size + batch_size]
             C_batch = C_shuffled[:, i * batch_size:i * batch_size + batch_size]
             grad_W, grad_b, _ = grad_function(X_batch, W, bias, C_batch)
@@ -24,10 +30,8 @@ def sgd(grad_function, cost_function, X_train, X_test, W, C_train, C_test, bias,
         costs.append(cost)
         accuracy_train.append(success_percentage(X_shuffled, W, C_shuffled, bias))
         accuracy_test.append(success_percentage(X_test, W, C_test, bias))
+        # Epoch end
     return W, costs, accuracy_train, accuracy_test
-
-
-
 
 
 def plot_accuracy(accuracy_train, accuracy_test, epoches):

@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from softmax import softmax_regression, softmax_grad
+from activations import tanh, tanh_grad
 from loadData import extract_grad_test_data
 from NN import NN
 
@@ -127,18 +128,15 @@ rangeArr = [i for i in range(0, 10)]
 #     plt.title('wights gradient test:')
 #     plt.show()
 
-def tan_h_gradient(x):
-    return 1 - (np.tanh(x) ** 2)
-
 
 if __name__ == '__main__':
-    # X_batches, W, bias, C_batches = extract_grad_test_data("PeaksData.mat", 100)
-    # zero_order_W, first_order_W = grad_W_test(X_batches[0], W, bias, C_batches[0])
-    # draw_results(zero_order_W, first_order_W)
-    # zero_order_bias, first_order_bias = grad_bias_test(X_batches[0], W, bias, C_batches[0])
-    # draw_results(zero_order_bias, first_order_bias, result_for='Biases')
-    nn = NN([50, 100, 20,10], np.tanh, tan_h_gradient)
-    X = np.random.rand(50, 1)
-    zero_order_bias, first_order_bias = hidden_layer_grad_test(nn, X)
-    # hidden_layer_grad_test2(nn, X)
-    draw_results(zero_order_bias, first_order_bias, result_for='Weights')
+    X_batches, W, bias, C_batches = extract_grad_test_data("PeaksData.mat", 100)
+    zero_order_W, first_order_W = grad_W_test(X_batches[0], W, bias, C_batches[0])
+    draw_results(zero_order_W, first_order_W)
+    zero_order_bias, first_order_bias = grad_bias_test(X_batches[0], W, bias, C_batches[0])
+    draw_results(zero_order_bias, first_order_bias, result_for='Biases')
+    # nn = NN([50, 100, 20,10], tanh, tanh_grad)
+    # X = np.random.rand(50, 1)
+    # zero_order_bias, first_order_bias = hidden_layer_grad_test(nn, X)
+    # # hidden_layer_grad_test2(nn, X)
+    # draw_results(zero_order_bias, first_order_bias, result_for='Weights')

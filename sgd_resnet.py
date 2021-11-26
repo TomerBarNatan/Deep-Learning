@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from loadData import *
 from softmax import *
 from residual_network import ResNet
+from activations import *
 
 
 def sgd(nn: ResNet, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, iter_num, divide_lr=50, graph_till_now = None):
@@ -49,29 +50,27 @@ def success_percentage(nn: ResNet, X, C):
     return accuracy_rate * 100
 
 
-def tan_h_gradient(x):
-    return np.ones(x.shape) - (np.tanh(x)) ** 2
-
-
 def sgd_nn_peaks_data():
     iter_num = 1000
     learning_rate = 100
     batch_size = 64
-    rn = ResNet(2,4,5, np.tanh, tan_h_gradient, first_layer= 8)
+    rn = ResNet(2,4,5, ReLU, ReLU_grad, first_layer= 8)
     trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("PeaksData")
     W_train, costs_train, accuracy_train, accuracy_test = sgd(rn, trainSetX, testSetX, theta, trainSetY, testSetY,
                                                               batch_size, learning_rate, iter_num,divide_lr=100,graph_till_now=50 )
     plot_accuracy(accuracy_train, accuracy_test, iter_num)
 
+
 def sgd_nn_swiss_roll_data():
     iter_num = 1000
     learning_rate = 10
     batch_size = 20000
-    rn = ResNet(2,6,2, np.tanh, tan_h_gradient, first_layer= 32)
+    rn = ResNet(2,6,2, ReLU, ReLU_grad, first_layer= 32)
     trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("SwissRollData")
     W_train, costs_train, accuracy_train, accuracy_test = sgd(rn, trainSetX, testSetX, theta, trainSetY, testSetY,
                                                               batch_size, learning_rate, iter_num,divide_lr=200,graph_till_now=100 )
     plot_accuracy(accuracy_train, accuracy_test, iter_num)
+
 
 if __name__ == '__main__':
     sgd_nn_peaks_data()

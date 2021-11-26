@@ -1,5 +1,6 @@
 import numpy as np
 from NN import NN
+from activations import tanh, tanh_grad
 import matplotlib.pyplot as plt
 num_of_iterations = 30
 
@@ -38,9 +39,6 @@ def nn_grad_test(nn: NN, X):
     return zero_order, first_order
 
 
-def tan_h_gradient(x):
-    return 1 - (np.tanh(x) ** 2)
-
 def draw_results(y_0, y_1, result_for='Weights'):
     plt.semilogy([i for i in range(num_of_iterations)], y_0)
     plt.semilogy([i for i in range(num_of_iterations)], y_1)
@@ -50,8 +48,9 @@ def draw_results(y_0, y_1, result_for='Weights'):
     plt.ylabel("Error")
     plt.show()
 
+
 if __name__ == '__main__':
-    nn = NN([50, 10], np.tanh, tan_h_gradient)
+    nn = NN([50, 10], tanh, tanh_grad)
     X = np.random.rand(50, 1)
     zero_order_bias, first_order_bias = nn_grad_test(nn, X)
     draw_results(zero_order_bias, first_order_bias, result_for='Weights')

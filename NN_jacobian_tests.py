@@ -1,11 +1,9 @@
 import numpy as np
 from NN import NN
 from softmax import softmax_regression, softmax_grad
+from activations import tanh, tanh_grad
 
 epsilons = [np.power(0.5, i) for i in range(1, 10)]
-
-def tan_h_gradient(x):
-    return 1 - np.tanh(x) ** 2
 
 
 def jacobian_test(func, batch_size, layers):
@@ -13,7 +11,7 @@ def jacobian_test(func, batch_size, layers):
     input_size = layers_dim[0]
     number_of_labels = output_size = layers_dim[-1]
 
-    model = NN(layers_dim, np.tanh, softmax_regression, tan_h_gradient, softmax_grad)
+    model = NN(layers_dim, tanh, tanh_grad)
 
     Y = np.random.choice(range(number_of_labels), size=batch_size)
     y_hot_vec = np.zeros((number_of_labels, batch_size))

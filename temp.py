@@ -35,7 +35,7 @@ def jacobian_check(test='loss', batch_size=1, L=1):
     input_size = layers_dim[0]
     number_of_labels = output_size = layers_dim[-1]
     # init wights
-    nn_model = NN(layers_dim, np.tanh, softmax_regression, tan_h_gradient, softmax_grad)
+    nn_model = NN(layers_dim, np.tanh, tan_h_gradient)
     # init labels and samples
     # X = np.random.randn(input_size, batch_size)
     Y = np.random.choice(range(number_of_labels), size=batch_size)

@@ -1,6 +1,6 @@
-import numpy as np
 import matplotlib.pyplot as plt
 from loadData import *
+from activations import *
 from softmax import *
 from NN import NN
 
@@ -54,15 +54,15 @@ def success_percentage(nn: NN, X, C):
     return accuracy_rate * 100
 
 
-def tan_h_gradient(x):
-    return np.ones(x.shape) - (np.tanh(x)) ** 2
+# def tan_h_gradient(x):
+#     return np.ones(x.shape) - (np.tanh(x)) ** 2
 
 
 def sgd_nn_peaks_data():
     iter_num = 200
     learning_rate = 10
     batch_size = 60
-    nn = NN([2, 5, 6, 8, 10, 5], relu, relu_grad)
+    nn = NN([2, 5, 6, 8, 10, 5], ReLU, ReLU_grad)
     trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("PeaksData")
     W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
                                                               batch_size, learning_rate, iter_num, graph_till_now=50)
@@ -73,28 +73,18 @@ def sgd_nn_gmm_data():
     iter_num = 200
     learning_rate = 100
     batch_size = 60
-    nn = NN([5, 5, 6, 8, 10, 5], np.tanh, tan_h_gradient)
+    nn = NN([5, 5, 6, 8, 10, 5], tanh, tanh_grad)
     trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("GMMData")
     W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
                                                               batch_size, learning_rate, iter_num)
     plot_accuracy(accuracy_train, accuracy_test, iter_num)
 
 
-def relu(x):
-    return np.maximum(x, 0)
-
-
-def relu_grad(x):
-    f = lambda t: 1 if t >= 0 else 0
-    vfunc = np.vectorize(f)
-    return vfunc(x)
-
-
 def sgd_nn_swiss_roll_data():
     iter_num = 1000
     learning_rate = 0.3
     batch_size = 17
-    nn = NN([2, 5, 6, 6, 4, 5, 2], relu, relu_grad)
+    nn = NN([2, 5, 6, 6, 4, 5, 2], ReLU, ReLU_grad)
     trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("SwissRollData")
     W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
                                                               batch_size, learning_rate, iter_num, 10000, 50)
