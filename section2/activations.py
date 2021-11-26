@@ -1,11 +1,11 @@
 import numpy as np
 
 
-def tanh():
+def tanh(x):
 	"""
 	:return: tanh activation function
 	"""
-	return np.tanh
+	return np.tanh(x)
 
 
 def tanh_grad(x):

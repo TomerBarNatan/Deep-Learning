@@ -20,7 +20,6 @@ def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, 
     :param learning_rate: the desired learning rate
     :param epoch_num: number of epochs to perform
     :param divide_lr: how many epochs until dividing the learning rate by 10
-    :param graph_till_now:
     :return: Optimized weights, costs through the optimization, accuracy lists for the train and test
     """
     costs = []
@@ -39,8 +38,8 @@ def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, 
             X_batch = X_shuffled[:, i * batch_size:i * batch_size + batch_size]
             C_batch = C_shuffled[:, i * batch_size:i * batch_size + batch_size]
             cost, probs, linear_layers, nonlinear_layers = nn.forward(X_batch, C_batch)
-            nn.backpropagation(nonlinear_layers, C_batch)
-            nn.update_thetas(learning_rate)
+            weights_grads, biases_grads = nn.backpropagation(nonlinear_layers, C_batch)
+            nn.update_thetas(weights_grads, biases_grads, learning_rate)
             cur_costs.append(cost)
         costs.append(sum(cur_costs) / len(cur_costs))
         accuracy_train.append(success_percentage(nn, X_shuffled, C_shuffled))
