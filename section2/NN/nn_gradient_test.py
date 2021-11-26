@@ -1,6 +1,6 @@
 import numpy as np
-from NN import NN
-from activations import tanh, tanh_grad
+from nn_from_scratch.section2.NN.NN import NN
+from nn_from_scratch.section2.activations import tanh, tanh_grad
 import matplotlib.pyplot as plt
 num_of_iterations = 30
 

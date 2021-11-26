@@ -1,9 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from softmax import softmax_regression, softmax_grad
-from activations import tanh, tanh_grad
 from loadData import extract_grad_test_data
-from NN import NN
 
 num_of_iterations = 10
 

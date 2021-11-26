@@ -1,5 +1,4 @@
-from softmax import *
-from NN import NN
+from nn_from_scratch.section2.NN.NN import NN
 import numpy as np
 import matplotlib.pyplot as plt
 
