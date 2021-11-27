@@ -20,7 +20,7 @@ def nn_grad_test_W(nn: NN, X):
     grad_W = np.concatenate([w.flatten() for w in weight_grads])
 
     # define a random d for the test and align dimensions
-    ds_w = [np.ones((w.shape[0], w.shape[1])) for w in nn.weights]
+    ds_w = [np.random.rand(w.shape[0], w.shape[1]) for w in nn.weights]
     ds_w = [d / np.linalg.norm(d) for d in ds_w]
     d_flat = np.concatenate([d.flatten() for d in ds_w])
     nn_weights_original = nn.weights.copy()

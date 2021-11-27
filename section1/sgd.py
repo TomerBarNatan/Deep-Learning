@@ -3,8 +3,7 @@ from loadData import *
 from softmax import *
 
 
-def sgd(grad_function, cost_function, X_train, X_test, W, C_train, C_test, bias, batch_size, learning_rate, epoch_num,
-        epsilon=0.1):
+def sgd(grad_function, cost_function, X_train, X_test, W, C_train, C_test, bias, batch_size, learning_rate, epoch_num):
     """
     SGD algorithm implementation.
     """
