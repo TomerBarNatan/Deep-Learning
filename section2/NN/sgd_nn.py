@@ -5,7 +5,7 @@ from section1.softmax import *
 from section2.NN.NN import NN
 
 
-def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, epoch_num, divide_lr=50,
+def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, epoch_num, divide_lr=500,
         graph_till_now=None):
     """
     SGD for the neural network. each SGD batch iteration, the network learns using forward pass. then, backpropagation
@@ -121,6 +121,25 @@ def sgd_nn_swiss_roll_data():
     trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("SwissRollData")
     W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
                                                               batch_size, learning_rate, iter_num, 10000, 50)
+    plot_accuracy(accuracy_train, accuracy_test, iter_num)
+
+
+
+def sgd_nn_small_train_peaks_data():
+    """
+    Run SGD with NN on Peaks data set
+    """
+    iter_num = 1000
+    learning_rate = 1
+    batch_size = 5
+    nn = NN([2, 5, 6, 5], tanh, tanh_grad)
+    trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("../../PeaksData")
+
+    shuffler = np.random.permutation(trainSetX.shape[1])
+    X_shuffled = trainSetX.T[shuffler].T
+    C_shuffled = trainSetY.T[shuffler].T
+    W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, X_shuffled[:,:200], testSetX, theta, C_shuffled[:,:200], testSetY,
+                                                              batch_size, learning_rate, iter_num, graph_till_now=200)
     plot_accuracy(accuracy_train, accuracy_test, iter_num)
 
 
