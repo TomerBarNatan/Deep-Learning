@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from loadData import *
+from data.loadData import *
 from section2.activations import *
 from section1.softmax import *
 from section2.NN.NN import NN

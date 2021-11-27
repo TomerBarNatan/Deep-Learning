@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from loadData import *
+from data.loadData import *
 from section2.ResNet.residual_network import ResNet
 from section2.activations import *
 
