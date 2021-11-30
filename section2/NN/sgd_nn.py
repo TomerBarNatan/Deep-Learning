@@ -144,5 +144,5 @@ def sgd_nn_small_train_peaks_data():
 
 
 if __name__ == '__main__':
-    # sgd_nn_peaks_data()
-    sgd_nn_swiss_roll_data()
+    sgd_nn_peaks_data()
+    # sgd_nn_swiss_roll_data()
