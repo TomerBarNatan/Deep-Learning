@@ -38,7 +38,7 @@ def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, 
             X_batch = X_shuffled[:, i * batch_size:i * batch_size + batch_size]
             C_batch = C_shuffled[:, i * batch_size:i * batch_size + batch_size]
             cost, probs, linear_layers, nonlinear_layers = nn.forward(X_batch, C_batch)
-            weights_grads, biases_grads = nn.backpropagation(nonlinear_layers, C_batch)
+            _, weights_grads, biases_grads = nn.backpropagation(nonlinear_layers, C_batch)
             nn.update_thetas(weights_grads, biases_grads, learning_rate)
             cur_costs.append(cost)
         costs.append(sum(cur_costs) / len(cur_costs))
@@ -103,7 +103,7 @@ def sgd_nn_gmm_data():
     iter_num = 200
     learning_rate = 100
     batch_size = 60
-    nn = NN([5, 5, 6, 8, 10, 5], tanh, tanh_grad)
+    nn = NN([5, 5, 6, 8, 10, 5], ReLU, ReLU_grad)
     trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("GMMData")
     W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
                                                               batch_size, learning_rate, iter_num)
@@ -114,10 +114,10 @@ def sgd_nn_swiss_roll_data():
     """
     Run SGD with NN on SwissRoll data set
     """
-    iter_num = 1000
-    learning_rate = 0.1
-    batch_size = 100
-    nn = NN([2, 5, 6, 6, 4, 5, 2], ReLU, ReLU_grad)
+    iter_num = 400
+    learning_rate = 0.03
+    batch_size = 17
+    nn = NN([2, 5, 6, 6, 4, 2], ReLU, ReLU_grad)
     trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("SwissRollData")
     W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
                                                               batch_size, learning_rate, iter_num, 10000, 50)
@@ -144,4 +144,5 @@ def sgd_nn_small_train_peaks_data():
 
 
 if __name__ == '__main__':
+    # sgd_nn_peaks_data()
     sgd_nn_swiss_roll_data()

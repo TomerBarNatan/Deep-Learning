@@ -131,8 +131,8 @@ class ResNet:
         grad_W1 = (1 / batch_size) * (grad_activation * (Ws[1].T @ v)) @ X.T
         grad_W2 = (1 / batch_size) * v @ (self.activation(linear)).T
         grad_b = (1 / batch_size) * np.sum((grad_activation * (Ws[1].T @ v)), axis=1, keepdims=True)
-        new_v = v + (Ws[0].T @ (grad_activation * (Ws[1].T @ v)))
-        return grad_W1, grad_W2, grad_b, new_v
+        grad_X = v + (Ws[0].T @ (grad_activation * (Ws[1].T @ v)))
+        return grad_W1, grad_W2, grad_b, grad_X
 
     def hidden_layer_grad(self, X, W, b, v):
         """
@@ -149,8 +149,8 @@ class ResNet:
         common = grad_activation * v
         grad_W = (1 / batch_size) * common @ X.T
         grad_b = (1 / batch_size) * np.sum(common, axis=1, keepdims=True)
-        new_v = W.T @ common
-        return grad_W, grad_b, new_v
+        grad_X = W.T @ common
+        return grad_W, grad_b, grad_X
 
     def backpropagation(self, X_list, C):
         """
@@ -160,27 +160,39 @@ class ResNet:
         :return: gradients list of each layer w.r.t weights and bias
         """
         layer_number = len(X_list)
+        x_grads = []
         weight_grads = []
         bias_grads = []
 
         # last layer gradient
-        W_grad, b_grad, x_grad = self.softmax_gradient(X_list[-1], self.weights[-1], C, X_list[-2])
-        weight_grads.append(W_grad.copy())
-        bias_grads.append(b_grad.copy())
+        W_grad, b_grad, x_grad = self.backward_last_layer(X_list, C)
+        x_grads.insert(0, x_grad.copy())
+        weight_grads.insert(0, W_grad.copy())
+        bias_grads.insert(0, b_grad.copy())
         v_i = x_grad.copy()
 
         # hidden layer grads
         for i in range(layer_number - 2, 1, -1):
-            F_grad_W1_i, F_grad_W2_i, F_grad_b_i, v_i = self.res_hidden_layer_grad(X_list[i - 1], self.weights[i - 1],
-                                                                                   self.biases[i - 1],
-                                                                                   v_i)
-            weight_grads.append([F_grad_W1_i.copy(), F_grad_W2_i.copy()])
-            bias_grads.append(F_grad_b_i.copy())
+            F_grad_W1_i, F_grad_W2_i, F_grad_b_i, v_i = self.backward_hidden_layer(X_list, i, v_i)
+            x_grads.insert(0, v_i)
+            weight_grads.insert(0, [F_grad_W1_i.copy(), F_grad_W2_i.copy()])
+            bias_grads.insert(0, F_grad_b_i.copy())
 
-        grad_first_W, grad_first_b, _ = self.hidden_layer_grad(X_list[0], self.weights[0], self.biases[0], v_i)
-        weight_grads.append(grad_first_W.copy())
-        bias_grads.append(grad_first_b.copy())
-        return list(reversed(weight_grads)), list(reversed(bias_grads))
+        grad_first_W, grad_first_b, grad_first_X = self.hidden_layer_grad(X_list[0], self.weights[0], self.biases[0], v_i)
+        x_grads.insert(0, grad_first_X)
+        weight_grads.insert(0, grad_first_W.copy())
+        bias_grads.insert(0, grad_first_b.copy())
+        return x_grads, weight_grads, bias_grads
+
+    def backward_last_layer(self, X_list, C):
+        W_grad, b_grad, x_grad = self.softmax_gradient(X_list[-1], self.weights[-1], C, X_list[-2])
+        return W_grad, b_grad, x_grad
+
+    def backward_hidden_layer(self, X_list, i, v):
+        F_grad_W1_i, F_grad_W2_i, F_grad_b_i, grad_X_i = self.res_hidden_layer_grad(X_list[i - 1], self.weights[i - 1],
+                                                                               self.biases[i - 1],
+                                                                               v)
+        return F_grad_W1_i, F_grad_W2_i, F_grad_b_i, grad_X_i
 
     def update_thetas(self, W_grad_list, bias_grad_list, learning_rate):
         """

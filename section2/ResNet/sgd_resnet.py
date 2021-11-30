@@ -20,7 +20,7 @@ def sgd(nn: ResNet, X_train, X_test, W, C_train, C_test, batch_size, learning_ra
             X_batch = X_shuffled[:, i * batch_size:i * batch_size + batch_size]
             C_batch = C_shuffled[:, i * batch_size:i * batch_size + batch_size]
             cost, probs, linear_layers, nonlinear_layers = nn.forward(X_batch, C_batch)
-            weight_grads, bias_grads = nn.backpropagation(nonlinear_layers, C_batch)
+            _, weight_grads, bias_grads = nn.backpropagation(nonlinear_layers, C_batch)
             nn.update_thetas(weight_grads, bias_grads, learning_rate)
             costs.append(cost)
         accuracy_train.append(success_percentage(nn, X_shuffled, C_shuffled))

@@ -16,7 +16,7 @@ def nn_grad_test_W(nn: NN, X):
     C = np.zeros((10, 1))
     C[0] = 1
     F_0, _, _, nonlinear_layers = nn.forward(X, C)
-    weight_grads, biases_grads = nn.backpropagation(nonlinear_layers, C)
+    _, weight_grads, biases_grads = nn.backpropagation(nonlinear_layers, C)
     grad_W = np.concatenate([w.flatten() for w in weight_grads])
 
     # define a random d for the test and align dimensions
@@ -51,7 +51,7 @@ def nn_grad_test_b(nn: NN, X):
     C = np.zeros((10, 1))
     C[0] = 1
     F_0, _, _, nonlinear_layers = nn.forward(X, C)
-    _, biases_grads = nn.backpropagation(nonlinear_layers, C)
+    _, _, biases_grads = nn.backpropagation(nonlinear_layers, C)
     grad_b = np.concatenate([b.flatten() for b in biases_grads])
 
     # define a random d for the test

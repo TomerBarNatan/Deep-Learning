@@ -31,8 +31,6 @@ def extract_sgd_data(dataset):
 	testSetSize = 200
 	# shuffle validation set
 	idx = np.random.permutation(len(validationSetLabels[0]))
-	testSetX = validationSet[:, idx][:, :testSetSize]
-	testSetY = validationSetLabels[:, idx][:, :testSetSize]
 	# shuffle training set
 	idx = np.random.permutation(len(trainSetLabels[0]))
 	trainSetX = trainSet[:, idx]

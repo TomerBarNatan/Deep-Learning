@@ -20,8 +20,6 @@ class NN:
         for i in range(len(network_layers_list) - 1):
             W_i = np.random.uniform(-limit, limit, size=(network_layers_list[i + 1], network_layers_list[i]))
             W_i /= np.linalg.norm(W_i)
-            # W_i = np.zeros((network_layers_list[i + 1], network_layers_list[i]))
-            # W_i[1:2] = 1
             bias_i = np.zeros([network_layers_list[i + 1], 1])
             self.weights.append(W_i)
             self.biases.append(bias_i)
@@ -106,8 +104,8 @@ class NN:
         common = grad_activation * v
         grad_W = common @ X.T
         grad_b = np.sum(common, axis=1, keepdims=True)
-        new_v = W.T @ common
-        return grad_W, grad_b, new_v
+        grad_X = W.T @ common
+        return grad_W, grad_b, grad_X
 
     def backpropagation(self, X_list, C):
         """
@@ -117,20 +115,23 @@ class NN:
         :return: gradients list of each layer w.r.t weights and bias
         """
         layer_number = len(X_list)
+        x_grads = []
         weights_grads = []
         biases_grads = []
 
         # last layer gradient
         W_i_grad, b_i_grad, v_i = self.backward_last_layer(X_list, C)
+        x_grads.insert(0, v_i)
         weights_grads.insert(0, W_i_grad)
         biases_grads.insert(0, b_i_grad)
 
         # hidden layer grads
         for i in range(layer_number - 2, 0, -1):
             W_i_grad, b_i_grad, v_i = self.backward_hidden_layer(X_list, i, v_i)
+            x_grads.insert(0, v_i)
             weights_grads.insert(0, W_i_grad)
             biases_grads.insert(0, b_i_grad)
-        return weights_grads, biases_grads
+        return x_grads, weights_grads, biases_grads
 
     def backward_last_layer(self, X_list, C):
         """
@@ -151,8 +152,8 @@ class NN:
         :param v: vector v from the previous backward step
         :return: New vector v for the next backward step to use
         """
-        F_grad_W_i, F_grad_b_i, v_new = self.hidden_layer_grad(X_list[i - 1], self.weights[i - 1], self.biases[i - 1], v)
-        return F_grad_W_i, F_grad_b_i, v_new
+        F_grad_W_i, F_grad_b_i, F_grad_X_i = self.hidden_layer_grad(X_list[i - 1], self.weights[i - 1], self.biases[i - 1], v)
+        return F_grad_W_i, F_grad_b_i, F_grad_X_i
 
     def update_thetas(self, weights_grads, biases_grads, learning_rate):
         """
