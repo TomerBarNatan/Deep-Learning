@@ -80,14 +80,14 @@ def draw_results(y_0, y_1, result_for='Weights'):
     plt.semilogy([i for i in range(num_of_iterations)], y_0)
     plt.semilogy([i for i in range(num_of_iterations)], y_1)
     plt.legend(["Zero order approx", "First order approx"])
-    plt.title("Successful {res_for} Gradient Test In Semilog Scale".format(res_for=result_for))
+    plt.title(f"Gradient test for the network w.r.t {result_for} in semilog scale")
     plt.xlabel("Iteration")
     plt.ylabel("Error")
     plt.show()
 
 
 if __name__ == '__main__':
-    nn = NN([50, 10, 10, 10, 10], tanh, tanh_grad)
-    X = np.random.rand(50, 1)
+    nn = NN([5, 7, 8, 10, 10], tanh, tanh_grad)
+    X = np.random.rand(5, 1)
     nn_grad_test_W(nn, X)
     nn_grad_test_b(nn, X)
