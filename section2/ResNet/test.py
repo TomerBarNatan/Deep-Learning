@@ -125,6 +125,6 @@ def draw_results(zero_order, first_order, wrt='data'):
 if __name__ == '__main__':
     nn = ResNet(8, 4, 1, tanh, tanh_grad)
     X = np.random.rand(8, 1)
-    # jacobian_test_layer_X(nn, X)
+    jacobian_test_layer_X(nn, X)
     jacobian_test_layer_W1(nn, X)
-    # jacobian_test_layer_b(nn, X)
+    jacobian_test_layer_b(nn, X)

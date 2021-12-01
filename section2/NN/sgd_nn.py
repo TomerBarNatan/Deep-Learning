@@ -5,7 +5,7 @@ from section1.softmax import *
 from section2.NN.NN import NN
 
 
-def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, epoch_num, divide_lr=500,
+def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, epoch_num, divide_lr=50,
         graph_till_now=None):
     """
     SGD for the neural network. each SGD batch iteration, the network learns using forward pass. then, backpropagation
@@ -103,7 +103,7 @@ def sgd_nn_gmm_data():
     iter_num = 200
     learning_rate = 100
     batch_size = 60
-    nn = NN([5, 5, 6, 8, 10, 5], ReLU, ReLU_grad)
+    nn = NN([5, 5, 6, 8, 10, 5], tanh, tanh_grad)
     trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("GMMData")
     W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
                                                               batch_size, learning_rate, iter_num)

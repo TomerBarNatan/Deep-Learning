@@ -50,7 +50,7 @@ def success_percentage(nn: ResNet, X, C):
 
 def sgd_nn_peaks_data():
     iter_num = 1000
-    learning_rate = 100
+    learning_rate = 1
     batch_size = 64
     rn = ResNet(2,4,5, ReLU, ReLU_grad, first_layer= 8)
     trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("PeaksData")

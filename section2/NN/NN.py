@@ -100,10 +100,11 @@ class NN:
         :return: The hidden layer gradient w.r.t weights, bias and the new v vector to use in the previous layer
         """
         linear = W @ X + b
+        batch_size = linear.shape[1]
         grad_activation = self.activation_gradient(linear)
         common = grad_activation * v
-        grad_W = common @ X.T
-        grad_b = np.sum(common, axis=1, keepdims=True)
+        grad_W = (1 / batch_size) * common @ X.T
+        grad_b = (1 / batch_size) * np.sum(common, axis=1, keepdims=True)
         grad_X = W.T @ common
         return grad_W, grad_b, grad_X
 

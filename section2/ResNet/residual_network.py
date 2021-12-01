@@ -185,10 +185,23 @@ class ResNet:
         return x_grads, weight_grads, bias_grads
 
     def backward_last_layer(self, X_list, C):
+        """
+        Calculate the gradient of the last layer.
+        :param X_list: all nonlinear x's collected at forward steps
+        :param C: an indicator matrix for labeling
+        :return: The last layer gradient w.r.t weights, bias and x
+        """
         W_grad, b_grad, x_grad = self.softmax_gradient(X_list[-1], self.weights[-1], C, X_list[-2])
         return W_grad, b_grad, x_grad
 
     def backward_hidden_layer(self, X_list, i, v):
+        """
+        Backward step for the first hidden layer
+        :param X_list: list of X (data) of each layer (from the forward pass)
+        :param i: index of the current layer
+        :param v: vector v from the previous backward step
+        :return: New vector v for the next backward step to use
+        """
         F_grad_W1_i, F_grad_W2_i, F_grad_b_i, grad_X_i = self.res_hidden_layer_grad(X_list[i - 1], self.weights[i - 1],
                                                                                self.biases[i - 1],
                                                                                v)
