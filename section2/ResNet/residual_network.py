@@ -99,21 +99,21 @@ class ResNet:
         nonlinear_layers.append(probs.copy())
         return cost, probs, linear_layers, nonlinear_layers
 
-    def softmax_gradient(self, X, W, C, v):
+    def softmax_gradient(self, probs, W, C, X):
         """
         Calculate the softmax gradients w.r.t the weights, the bias and the data.
-        :param X: the data
+        :param probs: the data
         :param W: the weights
         :param C: the indicators
-        :param v: a vector v
+        :param X: a vector v
         :return: softmax gradient w.r.t weights, bias and data
         """
         batch_size = C.shape[1]
-        dl_dy = (1 / batch_size) * (X - C)
-        dl_W = dl_dy @ v.T
-        dl_db = np.sum(dl_dy, axis=1, keepdims=True)
-        new_v = W.T @ dl_dy
-        return dl_W, dl_db, new_v
+        common = (1 / batch_size) * (probs - C)
+        grad_W = common @ X.T
+        grad_b = np.sum(common, axis=1, keepdims=True)
+        grad_X = W.T @ common
+        return grad_W, grad_b, grad_X
 
     def res_hidden_layer_grad(self, X, Ws, b, v):
         """
