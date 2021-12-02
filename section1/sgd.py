@@ -12,6 +12,7 @@ def sgd(grad_function, cost_function, X_train, X_test, W, C_train, C_test, bias,
     accuracy_test = []
     for epoch in range(epoch_num):
         # Epoch start
+        print(epoch)
         # shuffle the data and indicators before batching
         shuffler = np.random.permutation(X_train.shape[1])
         X_shuffled = X_train.T[shuffler].T
@@ -32,9 +33,9 @@ def sgd(grad_function, cost_function, X_train, X_test, W, C_train, C_test, bias,
     return W, costs, accuracy_train, accuracy_test
 
 
-def plot_accuracy(accuracy_train, accuracy_test, epoches):
-    plt.plot(range(epoches), accuracy_train)
-    plt.plot(range(epoches), accuracy_test)
+def plot_accuracy(accuracy_train, accuracy_test, epochs):
+    plt.plot(range(epochs), accuracy_train)
+    plt.plot(range(epochs), accuracy_test)
     plt.xlabel('Epoch')
     plt.ylabel('Success Percentage')
     plt.title('SGD Success % Per Epoch')
@@ -51,11 +52,10 @@ def success_percentage(X, W, C, bias):
 
 
 if __name__ == '__main__':
-    iter_num = 400
+    iter_num = 200
     learning_rate = 0.001
     batch_size = 60
-    trainSetX, trainSetY, testSetX, testSetY, theta, bias = \
-        extract_sgd_data('PeaksData')
+    trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data('PeaksData')
     W_train, costs_train, accuracy_train, accuracy_test = sgd(softmax_grad, softmax_regression, trainSetX, testSetX,
                                                               theta, trainSetY, testSetY, bias, batch_size,
                                                               learning_rate, iter_num)

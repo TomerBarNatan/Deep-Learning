@@ -65,6 +65,6 @@ def draw_results(y_0, y_1, result_for='Weights'):
 
 
 if __name__ == '__main__':
-    X_batches, W, bias, C_batches = extract_grad_test_data("GMMData.mat", 100)
+    X_batches, W, bias, C_batches = extract_grad_test_data("GMMData", 100)
     grad_W_test(X_batches[0], W, bias, C_batches[0])
     grad_bias_test(X_batches[0], W, bias, C_batches[0])

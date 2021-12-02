@@ -3,7 +3,7 @@ from section2.NN.NN import NN
 from section2.activations import tanh, tanh_grad
 import matplotlib.pyplot as plt
 
-iter_num = 10
+iter_num = 8
 
 
 def jacobian_test_layer_X(nn: NN, X_0):

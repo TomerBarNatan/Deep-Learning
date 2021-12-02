@@ -5,23 +5,23 @@ from section1.softmax import *
 from section2.NN.NN import NN
 
 
-def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, epoch_num, divide_lr=50,
-        graph_till_now=None):
+def sgd(data_set, nn: NN, batch_size, learning_rate, epoch_num, train_size=None, divide_lr=50, graph_till_now=None,
+        should_plot=True):
     """
     SGD for the neural network. each SGD batch iteration, the network learns using forward pass. then, backpropagation
     occurs to calculate the gradients and update the network params.
+    :param data_set: the name of the data set to run
     :param nn: the neural network object
-    :param X_train: train data
-    :param X_test: test data
-    :param W: weights
-    :param C_train: train indicators
-    :param C_test: test indicators
     :param batch_size: the desired batch size
     :param learning_rate: the desired learning rate
     :param epoch_num: number of epochs to perform
+    :param train_size: size of train data to load
     :param divide_lr: how many epochs until dividing the learning rate by 10
+    :param graph_till_now: show progress plot after some iterations
+    :param should_plot: plot accuracy and cost at the end of the optimization
     :return: Optimized weights, costs through the optimization, accuracy lists for the train and test
     """
+    X_train, C_train, X_test, C_test = extract_nn_sgd_data(data_set, train_size)
     costs = []
     accuracy_train = []
     accuracy_test = []
@@ -44,14 +44,16 @@ def sgd(nn: NN, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, 
         costs.append(sum(cur_costs) / len(cur_costs))
         accuracy_train.append(success_percentage(nn, X_shuffled, C_shuffled))
         accuracy_test.append(success_percentage(nn, X_test, C_test))
+        # plot the accuracy progress
         if graph_till_now and epoch % graph_till_now == 0 and epoch > 0:
-            # plt.plot([i for i in range(epoch + 1)], costs)
-            # plt.show()
             plot_accuracy(accuracy_train, accuracy_test, epoch + 1)
-    return W, costs, accuracy_train, accuracy_test
+    if should_plot:
+        plot_accuracy(accuracy_train, accuracy_test, epoch_num)
+        plot_cost(costs, epoch_num)
+    return costs, accuracy_train, accuracy_test
 
 
-def plot_accuracy(accuracy_train, accuracy_test, epochs):
+def plot_accuracy(accuracy_train, accuracy_test, epochs, data_set):
     """
     Plots the accuracy graphs of the SGD iterations
     :param accuracy_train: train data accuracy
@@ -62,8 +64,21 @@ def plot_accuracy(accuracy_train, accuracy_test, epochs):
     plt.plot(range(epochs), accuracy_test)
     plt.xlabel('Epoch')
     plt.ylabel('Success Percentage')
-    plt.title('SGD Success % Per Epoch')
+    plt.title(f'SGD Success % Per Epoch for {data_set}')
     plt.legend(['Success % - Train', 'Success % - Test'])
+    plt.show()
+
+
+def plot_cost(costs, epochs):
+    """
+        Plots the cost graph of the SGD optimization
+        :param costs: costs received in the optimization process
+        :param epochs: number of epochs performed
+        """
+    plt.plot(range(epochs), costs)
+    plt.xlabel('Epoch')
+    plt.ylabel('Cost')
+    plt.title('Cost Function Per Epoch')
     plt.show()
 
 
@@ -81,44 +96,39 @@ def success_percentage(nn: NN, X, C):
     accuracy_rate = sum(labels_pred == labels_true) / C.shape[1]
     return accuracy_rate * 100
 
+
 def sgd_nn_peaks_data():
     """
     Run SGD with NN on Peaks data set
     """
-    iter_num = 200
+    iter_num = 400
     learning_rate = 10
-    batch_size = 60
+    batch_size = 64
     nn = NN([2, 5, 6, 8, 10, 5], ReLU, ReLU_grad)
-    trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("PeaksData")
-    W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
-                                                              batch_size, learning_rate, iter_num, graph_till_now=50)
-    plot_accuracy(accuracy_train, accuracy_test, iter_num)
+    sgd("PeaksData", nn, batch_size, learning_rate, iter_num)
 
 
-def sgd_nn_peaks_data_multi_layer():
+def sgd_nn_peaks_data_multi_layer(train_size=None):
     """
     Run SGD with NN on Peaks data set
     """
     iter_num = 200
     batch_size = 60
-    # layers = [[2, 5], [2, 5, 5], [2, 5, 10, 5],[2, 5, 6, 8, 10, 5], [2, 5, 6, 8, 10, 16, 10, 5]]
+    layers = [[2, 5], [2, 5, 5], [2, 5, 10, 5],[2, 5, 6, 8, 10, 5], [2, 5, 6, 8, 10, 16, 10, 5]]
     legend = []
 
-    layers = [[2, 5, 6, 8, 10, 5]]
     for layer in layers:
         learning_rate = 10
         nn = NN(layer, ReLU, ReLU_grad)
-        trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("PeaksData")
-        W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
-                                                                  batch_size, learning_rate, iter_num)
-
+        costs_train, accuracy_train, accuracy_test = sgd("PeaksData", nn, batch_size, learning_rate, iter_num,
+                                                         train_size=train_size, should_plot=False)
         plt.plot(range(iter_num), accuracy_train)
         plt.plot(range(iter_num), accuracy_test)
         plt.xlabel('Epoch')
         plt.ylabel('Success Percentage')
         legend += [f'Success % - {len(layer)} layers']
     plt.legend(legend)
-    plt.title('SGD Success % Per Epoch')
+    plt.title('SGD Success % Per Epoch for PeaksData')
     plt.show()
 
 
@@ -130,35 +140,31 @@ def sgd_nn_gmm_data():
     learning_rate = 100
     batch_size = 32
     nn = NN([5, 5, 6, 8, 10, 5], tanh, tanh_grad)
-    trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("GMMData")
-    W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
-                                                              batch_size, learning_rate, iter_num, graph_till_now=50)
-    plot_accuracy(accuracy_train, accuracy_test, iter_num)
+    sgd("GMMData", nn, batch_size, learning_rate, iter_num)
 
-def sgd_nn_gmm_data_multi_layer():
+
+def sgd_nn_gmm_data_multi_layer(train_size=None):
     """
     Run SGD with NN on Peaks data set
     """
     iter_num = 200
     batch_size = 32
-    layers = [[5, 5]]
     layers = [[5, 5], [5, 10, 5], [5, 8, 10, 5],[5, 6, 6, 8, 10, 5], [5, 6, 6, 8, 10, 16, 10, 5]]
     legend = []
     for layer in layers:
         learning_rate = 10
         nn = NN(layer, ReLU, ReLU_grad)
-        trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("GMMData")
-        W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
-                                                                  batch_size, learning_rate, iter_num)
-
-        # plt.plot(range(iter_num), accuracy_train)
+        costs_train, accuracy_train, accuracy_test = sgd("GMMData", nn, batch_size, learning_rate, iter_num,
+                                                         train_size=train_size, should_plot=False)
+        plt.plot(range(iter_num), accuracy_train)
         plt.plot(range(iter_num), accuracy_test)
         plt.xlabel('Epoch')
         plt.ylabel('Success Percentage')
         legend += [f'Success % - {len(layer)} layers']
     plt.legend(legend)
-    plt.title('SGD Success % Per Epoch')
+    plt.title('SGD Success % Per Epoch for GMMData')
     plt.show()
+
 
 def sgd_nn_swiss_roll_data():
     """
@@ -168,12 +174,10 @@ def sgd_nn_swiss_roll_data():
     learning_rate = 0.03
     batch_size = 17
     nn = NN([2, 5, 6, 6, 4, 2], ReLU, ReLU_grad)
-    trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("SwissRollData")
-    W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
-                                                              batch_size, learning_rate, iter_num, 10000)
-    plot_accuracy(accuracy_train, accuracy_test, iter_num)
+    sgd("SwissRollData", nn, batch_size, learning_rate, iter_num)
 
-def sgd_nn_swiss_roll_data_multi_layer():
+
+def sgd_nn_swiss_roll_data_multi_layer(train_size=None):
     """
     Run SGD with NN on Peaks data set
     """
@@ -184,38 +188,27 @@ def sgd_nn_swiss_roll_data_multi_layer():
     for layer in layers:
         learning_rate = 0.03
         nn = NN(layer, ReLU, ReLU_grad)
-        trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("SwissRollData")
-        W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
-                                                                  batch_size, learning_rate, iter_num, 10000)
-
-        # plt.plot(range(iter_num), accuracy_train)
+        costs_train, accuracy_train, accuracy_test = sgd("SwissRollData", nn, batch_size, learning_rate, iter_num,
+                                                         train_size=train_size, should_plot=False)
+        plt.plot(range(iter_num), accuracy_train)
         plt.plot(range(iter_num), accuracy_test)
         plt.xlabel('Epoch')
         plt.ylabel('Success Percentage')
         legend += [f'Success % - {len(layer)} layers']
     plt.legend(legend)
-    plt.title('SGD Success % Per Epoch')
+    plt.title('SGD Success % Per Epoch for SwissRollData')
     plt.show()
 
 
-def sgd_nn_small_train_peaks_data():
-    """
-    Run SGD with NN on Peaks data set
-    """
-    iter_num = 1000
-    learning_rate = 1
-    batch_size = 5
-    nn = NN([2, 5, 6, 5], tanh, tanh_grad)
-    trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("../../PeaksData")
-
-    shuffler = np.random.permutation(trainSetX.shape[1])
-    X_shuffled = trainSetX.T[shuffler].T
-    C_shuffled = trainSetY.T[shuffler].T
-    W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, X_shuffled[:, :200], testSetX, theta,
-                                                              C_shuffled[:, :200], testSetY,
-                                                              batch_size, learning_rate, iter_num, graph_till_now=200)
-    plot_accuracy(accuracy_train, accuracy_test, iter_num)
-
-
 if __name__ == '__main__':
+    sgd_nn_peaks_data()
+    sgd_nn_peaks_data_multi_layer()
+    sgd_nn_peaks_data_multi_layer(train_size=200)
+
+    sgd_nn_gmm_data()
+    sgd_nn_gmm_data_multi_layer()
+    sgd_nn_gmm_data_multi_layer(train_size=200)
+
+    sgd_nn_swiss_roll_data()
     sgd_nn_swiss_roll_data_multi_layer()
+    sgd_nn_swiss_roll_data_multi_layer(train_size=200)

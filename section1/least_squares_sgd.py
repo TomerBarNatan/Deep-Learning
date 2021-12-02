@@ -40,7 +40,7 @@ def least_squares_cost_function(A, x, b):
 
 
 if __name__ == '__main__':
-    iter_num = 400
+    iter_num = 1000
     batch_size = 50
     lr = 1
     A = np.random.rand(10, 6)
