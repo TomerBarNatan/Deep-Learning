@@ -139,7 +139,7 @@ def sgd_nn_gmm_data():
     iter_num = 200
     learning_rate = 100
     batch_size = 32
-    nn = NN([5, 5, 6, 8, 10, 5], tanh, tanh_grad)
+    nn = NN([5, 5, 6, 8, 10, 5], ReLU, ReLU_grad)
     sgd("GMMData", nn, batch_size, learning_rate, iter_num)
 
 
