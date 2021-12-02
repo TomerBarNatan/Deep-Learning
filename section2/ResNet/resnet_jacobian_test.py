@@ -4,9 +4,6 @@ from section2.activations import tanh, tanh_grad
 import matplotlib.pyplot as plt
 
 
-iter_num = 10
-
-
 def jacobian_test_layer_X(nn: ResNet, X_0):
     """
     Direct jacobian transposed test for a single layer w.r.t to the data
@@ -67,7 +64,7 @@ def jacobian_test_layer_W1(nn: ResNet, X_0):
     d2 = (1 / np.linalg.norm(d2)) * d2
 
     g_x = np.dot(X_1.T, u).item()
-    JtU_W1, _, _, _ = nn.backward_hidden_layer([X_0_new, X_1], 1, u)
+    JtU_W1, JtU_W2, _, _ = nn.res_hidden_layer_grad(X_1, Ws_1, b_1, u)
 
     zero_order = np.zeros(iter_num)
     first_order = np.zeros(iter_num)
