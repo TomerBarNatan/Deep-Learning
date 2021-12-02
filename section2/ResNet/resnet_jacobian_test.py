@@ -11,7 +11,7 @@ def jacobian_test_layer_X(nn: ResNet, X_0):
     :param X_0: initial data (we init with random data)
     :return: shows a plot of the zero order vs. first order approximation
     """
-    iter_num = 8
+    iter_num = 6
     Ws_0 = nn.weights[1]
     b_0 = nn.biases[1].copy()
     _, X_1 = nn.res_forward_step(X_0, Ws_0, b_0)
@@ -43,7 +43,7 @@ def jacobian_test_layer_X(nn: ResNet, X_0):
     draw_results(zero_order, first_order, iter_num)
 
 
-def jacobian_test_layer_W1(nn: ResNet, X_0):
+def jacobian_test_layer_W(nn: ResNet, X_0):
     """
         Direct jacobian transposed test for a single layer w.r.t to the weights
         :param nn: the neural network object
@@ -140,5 +140,5 @@ if __name__ == '__main__':
     nn = ResNet(2, 4, 1, tanh, tanh_grad, first_layer=2)
     X = np.random.rand(2, 1)
     jacobian_test_layer_X(nn, X)
-    jacobian_test_layer_W1(nn, X)
+    jacobian_test_layer_W(nn, X)
     jacobian_test_layer_b(nn, X)
