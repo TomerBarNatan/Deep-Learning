@@ -23,7 +23,7 @@ def jacobian_test_layer_X(nn: NN, X_0):
     d = (1 / np.linalg.norm(d)) * d
 
     g_x = np.dot(X_1.T, u).item()
-    _, _, JtU_X = nn.backward_hidden_layer([X_0, X_1], 1, u)
+    _, _, JtU_X = nn.hidden_layer_grad(X_0, W_0, b_0, u)
 
     zero_order = np.zeros(iter_num)
     first_order = np.zeros(iter_num)
@@ -57,7 +57,7 @@ def jacobian_test_layer_W(nn: NN, X_0):
     d = (1 / np.linalg.norm(d)) * d
 
     g_x = np.dot(X_1.T, u).item()
-    JtU_W, _, _ = nn.backward_hidden_layer([X_0, X_1], 1, u)
+    JtU_W, _, _ = nn.hidden_layer_grad(X_0, W_0, b_0, u)
 
     zero_order = np.zeros(iter_num)
     first_order = np.zeros(iter_num)
@@ -92,7 +92,7 @@ def jacobian_test_layer_b(nn: NN, X_0):
     d = (1 / np.linalg.norm(d)) * d
 
     g_x = np.dot(X_1.T, u).item()
-    _, JtU_b, _ = nn.backward_hidden_layer([X_0, X_1], 1, u)
+    _, JtU_b, _ = nn.hidden_layer_grad(X_0, W_0, b_0, u)
 
     zero_order = np.zeros(iter_num)
     first_order = np.zeros(iter_num)
