@@ -44,7 +44,7 @@ def plot_accuracy(accuracy_train, accuracy_test, epochs):
 
 
 def success_percentage(X, W, C, bias):
-    probs = sigmoid(X, W, bias)
+    probs = softmax(X, W, bias)
     labels_pred = np.argmax(probs, axis=1)
     labels_true = np.argmax(C.T, axis=1)
     accuracy_rate = sum(labels_pred == labels_true) / C.shape[1]

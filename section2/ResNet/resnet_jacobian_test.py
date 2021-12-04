@@ -84,7 +84,6 @@ def jacobian_test_layer_W(nn: ResNet, X_0):
         JtU_W2_flat = JtU_W2.reshape(-1, 1)
         zero_order[i] = abs(gx_epsilon - g_x)
         first_order[i] = abs(gx_epsilon - g_x - epsilon * d1_flat.T @ JtU_W1_flat - epsilon * d2_flat.T @ JtU_W2_flat)
-        # first_order[i] = abs(gx_epsilon - g_x - epsilon * d1_flat.T @ JtU_W1_flat)
         print(i, '\t', zero_order[i], '\t', first_order[i])
     draw_results(zero_order, first_order, iter_num, 'W')
 
