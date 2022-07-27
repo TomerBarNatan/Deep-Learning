@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from softmax import softmax_regression, softmax_grad
-from data.loadData import extract_grad_test_data
+from Assignment1.data.loadData import extract_grad_test_data
 
 num_of_iterations = 10
 

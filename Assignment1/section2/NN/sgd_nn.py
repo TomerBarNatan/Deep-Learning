@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-from data.loadData import *
-from section2.activations import *
-from section1.softmax import *
-from section2.NN.NN import NN
+from Assignment1.data.loadData import *
+from Assignment1.section2.activations import *
+from Assignment1.section1.softmax import *
+from Assignment1.section2.NN.NN import NN
 
 
 def sgd(data_set, nn: NN, batch_size, learning_rate, epoch_num, train_size=None, divide_lr=50, graph_till_now=None,
@@ -48,7 +48,7 @@ def sgd(data_set, nn: NN, batch_size, learning_rate, epoch_num, train_size=None,
         if graph_till_now and epoch % graph_till_now == 0 and epoch > 0:
             plot_accuracy(accuracy_train, accuracy_test, epoch + 1)
     if should_plot:
-        plot_accuracy(accuracy_train, accuracy_test, epoch_num)
+        plot_accuracy(accuracy_train, accuracy_test, epoch_num, data_set)
         plot_cost(costs, epoch_num)
     return costs, accuracy_train, accuracy_test
 
@@ -103,9 +103,9 @@ def sgd_nn_peaks_data():
     """
     iter_num = 400
     learning_rate = 10
-    batch_size = 64
+    batch_size = 5
     nn = NN([2, 5, 6, 8, 10, 5], ReLU, ReLU_grad)
-    sgd("PeaksData", nn, batch_size, learning_rate, iter_num)
+    sgd("PeaksData", nn, batch_size, learning_rate, iter_num,train_size=200)
 
 
 def sgd_nn_peaks_data_multi_layer(train_size=None):
@@ -113,7 +113,7 @@ def sgd_nn_peaks_data_multi_layer(train_size=None):
     Run SGD with NN on Peaks data set
     """
     iter_num = 200
-    batch_size = 60
+    batch_size = 5
     layers = [[2, 5], [2, 5, 5], [2, 5, 10, 5],[2, 5, 6, 8, 10, 5], [2, 5, 6, 8, 10, 16, 10, 5]]
     legend = []
 
@@ -122,7 +122,7 @@ def sgd_nn_peaks_data_multi_layer(train_size=None):
         nn = NN(layer, ReLU, ReLU_grad)
         costs_train, accuracy_train, accuracy_test = sgd("PeaksData", nn, batch_size, learning_rate, iter_num,
                                                          train_size=train_size, should_plot=False)
-        plt.plot(range(iter_num), accuracy_train)
+        # plt.plot(range(iter_num), accuracy_train)
         plt.plot(range(iter_num), accuracy_test)
         plt.xlabel('Epoch')
         plt.ylabel('Success Percentage')
@@ -136,31 +136,31 @@ def sgd_nn_gmm_data():
     """
     Run SGD with NN on GMM data set
     """
-    iter_num = 200
-    learning_rate = 100
-    batch_size = 32
-    nn = NN([5, 5, 6, 8, 10, 5], ReLU, ReLU_grad)
-    sgd("GMMData", nn, batch_size, learning_rate, iter_num)
+    iter_num = 400
+    learning_rate = 1
+    batch_size = 5
+    nn = NN([5, 5, 6, 8, 10, 5], tanh, tanh_grad)
+    sgd("GMMData", nn, batch_size, learning_rate, iter_num,divide_lr=300,train_size=200)
 
 
 def sgd_nn_gmm_data_multi_layer(train_size=None):
     """
     Run SGD with NN on Peaks data set
     """
-    iter_num = 200
-    batch_size = 32
-    layers = [[5, 5], [5, 10, 5], [5, 8, 10, 5],[5, 6, 6, 8, 10, 5], [5, 6, 6, 8, 10, 16, 10, 5]]
+    iter_num = 400
+    batch_size = 5
+    layers = [[5, 5], [5, 10, 5], [5, 8, 10, 5],[5, 6, 10, 10, 5], [5, 10, 16, 10, 5]]
     legend = []
     for layer in layers:
-        learning_rate = 10
+        learning_rate = 1
         nn = NN(layer, ReLU, ReLU_grad)
         costs_train, accuracy_train, accuracy_test = sgd("GMMData", nn, batch_size, learning_rate, iter_num,
-                                                         train_size=train_size, should_plot=False)
-        plt.plot(range(iter_num), accuracy_train)
+                                                         train_size=train_size, should_plot=False, divide_lr=300)
+        # plt.plot(range(iter_num), accuracy_train)
         plt.plot(range(iter_num), accuracy_test)
         plt.xlabel('Epoch')
         plt.ylabel('Success Percentage')
-        legend += [f'Success % - {len(layer)} layers']
+    legend = [f'Success % - 2 layers',f'Success % - 4 layers',f'Success % - 4 layers',f'Success % - 6 layers',f'Success % - 8 layers']
     plt.legend(legend)
     plt.title('SGD Success % Per Epoch for GMMData')
     plt.show()
@@ -170,11 +170,11 @@ def sgd_nn_swiss_roll_data():
     """
     Run SGD with NN on SwissRoll data set
     """
-    iter_num = 400
-    learning_rate = 0.03
-    batch_size = 17
+    iter_num = 100
+    learning_rate = 10
+    batch_size = 5
     nn = NN([2, 5, 6, 6, 4, 2], ReLU, ReLU_grad)
-    sgd("SwissRollData", nn, batch_size, learning_rate, iter_num)
+    sgd("SwissRollData", nn, batch_size, learning_rate, iter_num, divide_lr=5000,train_size=200)
 
 
 def sgd_nn_swiss_roll_data_multi_layer(train_size=None):
@@ -190,7 +190,7 @@ def sgd_nn_swiss_roll_data_multi_layer(train_size=None):
         nn = NN(layer, ReLU, ReLU_grad)
         costs_train, accuracy_train, accuracy_test = sgd("SwissRollData", nn, batch_size, learning_rate, iter_num,
                                                          train_size=train_size, should_plot=False)
-        plt.plot(range(iter_num), accuracy_train)
+        # plt.plot(range(iter_num), accuracy_train)
         plt.plot(range(iter_num), accuracy_test)
         plt.xlabel('Epoch')
         plt.ylabel('Success Percentage')

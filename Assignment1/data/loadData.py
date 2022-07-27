@@ -22,7 +22,7 @@ def extract_grad_test_data(data_set, number_of_batches):
 
 
 def extract_sgd_data(dataset):
-	data = loadmat(f'../data/{dataset}.mat')
+	data = loadmat(f'/{dataset}.mat')
 	trainSet = np.array(data['Yt'])
 	trainSetLabels = np.array(data['Ct'])
 	validationSet = np.array(data['Yv'])

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from data.loadData import *
+from Assignment1.data.loadData import *
 from softmax import *
 
 

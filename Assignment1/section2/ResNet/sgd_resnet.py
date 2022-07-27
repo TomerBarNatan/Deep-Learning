@@ -1,16 +1,17 @@
 import matplotlib.pyplot as plt
-from data.loadData import *
-from section2.ResNet.residual_network import ResNet
-from section2.activations import *
+from Assignment1.data.loadData import *
+from Assignment1.section2.ResNet.residual_network import ResNet
+from Assignment1.section2.activations import *
 
 
-def sgd(nn: ResNet, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, iter_num, divide_lr=50, graph_till_now = None):
+def sgd(nn: ResNet, X_train, X_test, W, C_train, C_test, batch_size, learning_rate, iter_num, divide_lr=50,
+        graph_till_now=None):
     costs = []
     accuracy_train = []
     accuracy_test = []
     m = X_train.shape[1]
     for iter in range(iter_num):
-        if iter % divide_lr == 0:
+        if iter % divide_lr == 0 and iter < 100:
             learning_rate /= 10
         shuffler = np.random.permutation(X_train.shape[1])
         print(iter)
@@ -26,7 +27,7 @@ def sgd(nn: ResNet, X_train, X_test, W, C_train, C_test, batch_size, learning_ra
         accuracy_train.append(success_percentage(nn, X_shuffled, C_shuffled))
         accuracy_test.append(success_percentage(nn, X_test, C_test))
         if graph_till_now and iter % graph_till_now == 0 and iter > 0:
-            plot_accuracy(accuracy_train, accuracy_test, iter+1)
+            plot_accuracy(accuracy_train, accuracy_test, iter + 1)
     return W, costs, accuracy_train, accuracy_test
 
 
@@ -50,23 +51,24 @@ def success_percentage(nn: ResNet, X, C):
 
 def sgd_nn_peaks_data():
     iter_num = 1000
-    learning_rate = 1
+    learning_rate = 10
     batch_size = 64
-    rn = ResNet(2,4,5, ReLU, ReLU_grad, first_layer= 8)
+    rn = ResNet(2, 4, 5, ReLU, ReLU_grad, first_layer=8)
     trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("PeaksData")
     W_train, costs_train, accuracy_train, accuracy_test = sgd(rn, trainSetX, testSetX, theta, trainSetY, testSetY,
-                                                              batch_size, learning_rate, iter_num,divide_lr=100,graph_till_now=50 )
+                                                              batch_size, learning_rate, iter_num, divide_lr=50,
+                                                              graph_till_now=50)
     plot_accuracy(accuracy_train, accuracy_test, iter_num)
 
 
 def sgd_nn_swiss_roll_data():
-    iter_num = 1000
-    learning_rate = 10
-    batch_size = 20000
-    rn = ResNet(2,6,2, ReLU, ReLU_grad, first_layer= 32)
+    iter_num = 400
+    learning_rate = 0.03
+    batch_size = 17
+    nn = ResNet(2, 6, 2, ReLU, ReLU_grad, 6)
     trainSetX, trainSetY, testSetX, testSetY, theta, bias = extract_sgd_data("SwissRollData")
-    W_train, costs_train, accuracy_train, accuracy_test = sgd(rn, trainSetX, testSetX, theta, trainSetY, testSetY,
-                                                              batch_size, learning_rate, iter_num,divide_lr=200,graph_till_now=100 )
+    W_train, costs_train, accuracy_train, accuracy_test = sgd(nn, trainSetX, testSetX, theta, trainSetY, testSetY,
+                                                              batch_size, learning_rate, iter_num, graph_till_now=50 , divide_lr = 10000)
     plot_accuracy(accuracy_train, accuracy_test, iter_num)
 
 
