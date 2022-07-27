@@ -40,7 +40,7 @@ def extract_sgd_data(dataset):
 
 
 def extract_nn_sgd_data(dataset, train_size=None):
-	data = loadmat(f'../../data/{dataset}.mat')
+	data = loadmat(f'../../Assignmentt2/data/{dataset}.mat')
 	trainSet = np.array(data['Yt'])
 	trainSetLabels = np.array(data['Ct'])
 	validationSet = np.array(data['Yv'])
